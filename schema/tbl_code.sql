@@ -135,3 +135,33 @@ CREATE TABLE t_config_page_size_def (
     CONSTRAINT pk_config_page_size_def_id PRIMARY KEY (id)
 ) WITH (OIDS = FALSE);
 
+-- DROP TABLE t_config_font_def;
+CREATE TABLE t_config_font_def (
+    id bigserial NOT NULL,
+    media_id bigint NOT NULL,
+    name character varying (64) NOT NULL,
+    file_storage_id bigint NOT NULL,
+    file_extension character varying (4) NOT NULL,
+    file_size integer NOT NULL,
+    sort integer NOT NULL,
+    CONSTRAINT pk_config_font_def_id PRIMARY KEY (id)
+) WITH (OIDS = FALSE);
+
+-- DROP TABLE t_config_textstyle_def;
+CREATE TABLE t_config_textstyle_def (
+    id bigserial NOT NULL,
+    media_id bigint NOT NULL,
+    name character varying (64) NOT NULL,
+    sort integer NOT NULL,
+    font_id bigint NOT NULL,
+    font_size numeric NOT NULL,
+    color character varying (13) NOT NULL,
+    xscale numeric NOT NULL,
+    letter_spacing numeric NOT NULL,
+    line_height numeric NOT NULL,
+    text_align integer NOT NULL,
+    underline integer NOT NULL,
+    strikeline integer NOT NULL,
+    indent numeric NOT NULL,
+    CONSTRAINT pk_config_textstyle_def_id PRIMARY KEY (id)  
+) WITH (OIDS = FALSE);

@@ -78,6 +78,7 @@ INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (1, 'IMAG
 INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (2, 'ADVER', '/home/kyiimn/WWWRoot/acta_data/adver', 0);
 INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (3, 'ARTICLE', '/home/kyiimn/WWWRoot/acta_data/article', 0);
 INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (4, 'PAGE', '/home/kyiimn/WWWRoot/acta_data/page', 0);
+INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (5, 'FONT', '/home/kyiimn/WWWRoot/acta_data/font', 0);
 
 INSERT INTO t_config_page_size_def
  (name, paper_type, paper_width, paper_height, paper_direction, linespacing_size, linespacing_unit, linespacing_ratio, col_margin_inside, col_margin_outside, col_count, col_size, col_spacing, col_other, col_total_size, line_margin_top, line_margin_bottom, line_height, line_count, line_spacing, line_other, line_total_size) 
