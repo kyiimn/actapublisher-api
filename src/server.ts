@@ -1,7 +1,13 @@
 import App from './App';
+import dotenv from 'dotenv';
 
-const app = new App().application;
+dotenv.config();
 
-app.listen(3000, () => {
-  console.log('Server listening on port 3000');
+const app = new App({
+  origin: process.env.CORS || '*',
+  optionsSuccessStatus: 200
+}).application;
+
+app.listen(parseInt(process.env.SERVER_PORT || '3000', 10), () => {
+  console.log(`Server listening on port ${parseInt(process.env.SERVER_PORT || '3000', 10)}`);
 });

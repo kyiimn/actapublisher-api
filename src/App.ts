@@ -1,10 +1,12 @@
 import express from 'express';
+import cors from 'cors';
 
 class App {
     public application: express.Application;
 
-    constructor() {
+    constructor(corsOptions?: cors.CorsOptions) {
         this.application = express();
+        this.application.use(cors(corsOptions));
         this.router();
     }
 
