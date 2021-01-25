@@ -83,3 +83,6 @@ INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (5, 'FONT
 INSERT INTO t_config_page_size_def
  (name, paper_type, paper_width, paper_height, paper_direction, linespacing_size, linespacing_unit, linespacing_ratio, col_margin_inside, col_margin_outside, col_count, col_size, col_spacing, col_other, col_total_size, line_margin_top, line_margin_bottom, line_height, line_count, line_spacing, line_other, line_total_size) 
  VALUES ('기본판형', 'CUSTOM', 400, 548, 'V', 9.5, 'POINT', 100, 20.01, 20.01, 6, 55.63, 5, 0, 400, 3.9, 3.9, 3.35, 106, 1.5, 0, 548);
+
+INSERT INTO t_account_dept (id, media_id, name, sort, invalid_flag, "group") VALUES (1, 1, '개발부', 1, 0, 0);
+INSERT INTO t_account_user (id, media_id, dept_id, login_id, name, password, use, level, rule, fixed) VALUES (1, 1, 1, 'ykim', '김김', '1234', 1, 1, 1, 1);
