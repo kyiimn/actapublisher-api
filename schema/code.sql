@@ -85,4 +85,4 @@ INSERT INTO t_config_page_size_def
  VALUES ('기본판형', 'CUSTOM', 400, 548, 'V', 9.5, 'POINT', 100, 20.01, 20.01, 6, 55.63, 5, 0, 400, 3.9, 3.9, 3.35, 106, 1.5, 0, 548);
 
 INSERT INTO t_account_dept (id, media_id, name, sort, invalid_flag, "group") VALUES (1, 1, '개발부', 1, 0, 0);
-INSERT INTO t_account_user (id, media_id, dept_id, login_id, name, password, use, level, rule, fixed) VALUES (1, 1, 1, 'ykim', '김김', '1234', 1, 1, 1, 1);
+INSERT INTO t_account_user (media_id, dept_id, login_name, name, password, use, level, rule, fixed) VALUES (1, 1, 'ykim', '김김', '1234', 1, 1, 1, 1);

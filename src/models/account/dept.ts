@@ -1,4 +1,4 @@
-import conn from '../conn';
+import conn from '../../services/conn';
 
 export interface IAccountDept {
     id: number,
@@ -83,8 +83,8 @@ export class AccountDept {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'UPDATE t_account_dept SET media_id=$1, name=$2, sort=$3, invalid_flag=$4, "group"=$5, group_list=$6 WHERE id=$7',
-                [this.mediaId, this.name, this.sort, this.invalidFlag ? 1 : 0, this.group ? 1 : 0, this.groupMemberList, this.id]
+                'UPDATE t_account_dept SET name=$1, sort=$2, invalid_flag=$3, "group"=$4, group_list=$5 WHERE id=$6',
+                [this.name, this.sort, this.invalidFlag ? 1 : 0, this.group ? 1 : 0, this.groupMemberList, this.id]
             );
             return true;
         } catch (e) {
@@ -125,7 +125,6 @@ export class AccountDept {
         };
     }
 
-    set mediaId(mediaId: number) { this._mediaId = mediaId; }
     set name(name: string) { this._name = name; }
     set sort(sort: number) { this._sort = sort; }
     set invalidFlag(invalidFlag: boolean) { this._invalidFlag = invalidFlag; }

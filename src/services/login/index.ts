@@ -16,7 +16,7 @@ export default {
             req.session.rule = 1;
         };
         const dept = req.session.deptId ? await AccountDept.get(req.session.deptId) : null;
-        const user = req.session.userId ? await AccountUser.getById(req.session.userId) : null;
+        const user = req.session.userId ? await AccountUser.get(req.session.userId) : null;
 
         return {
             logined: req.session.logined,

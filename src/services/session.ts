@@ -98,7 +98,7 @@ class ActaSessionManager {
 
     result(req: Request, res: Response) {
         let result: { [key: string]: any } = {};
-        if (res.result) {
+        if (res.result !== undefined && res.result !== false) {
             result.status = 200;
             result.data = res.result;
         } else if (res.resultMessage) {

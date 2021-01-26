@@ -21,28 +21,104 @@ export default (app: express.Application) => {
         }
         next();
     });
-    app.get('/v1/info/code/media', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/media', async (req: Request, res: Response, next) => {
+        const result = await infoCodeService.media();
+        res.result = result;
+        next();
     });
-    app.get('/v1/info/code/local', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/local', async (req: Request, res: Response, next) => {
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoCodeService.local(mediaId);
+            res.result = result;
+        }
+        next();
     });
-    app.get('/v1/info/code/edition', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/edition', async (req: Request, res: Response, next) => {
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoCodeService.edition(mediaId);
+            res.result = result;
+        }
+        next();
     });
-    app.get('/v1/info/code/section', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/section', async (req: Request, res: Response, next) => {
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoCodeService.section(mediaId);
+            res.result = result;
+        }
+        next();
     });
-    app.get('/v1/info/code/adversize', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/adversize', async (req: Request, res: Response, next) => {
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoCodeService.adversize(mediaId);
+            res.result = result;
+        }
+        next();
     });
-    app.get('/v1/info/code/adverlocal', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/adverlocal', async (req: Request, res: Response, next) => {
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoCodeService.adverlocal(mediaId);
+            res.result = result;
+        }
+        next();
     });
-    app.get('/v1/info/code/color', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/color', async (req: Request, res: Response, next) => {
+        const result = await infoCodeService.color();
+        res.result = result;
+        next();
     });
-    app.get('/v1/info/code/printtype', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/printtype', async (req: Request, res: Response, next) => {
+        const result = await infoCodeService.printtype();
+        res.result = result;
+        next();
     });
-    app.get('/v1/info/code/closingtime', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/closingtime', async (req: Request, res: Response, next) => {
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoCodeService.closingtime(mediaId);
+            res.result = result;
+        }
+        next();
+   });
+    app.get('/v1/info/code/pagesize', async (req: Request, res: Response, next) => {
+        const result = await infoCodeService.pagesize();
+        res.result = result;
+        next();
     });
-    app.get('/v1/info/code/pagesize', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/font', async (req: Request, res: Response, next) => {
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoCodeService.font(mediaId);
+            res.result = result;
+        }
+        next();
     });
-    app.get('/v1/info/code/font', (req: express.Request, res: express.Response) => {
-    });
-    app.get('/v1/info/code/textstyle', (req: express.Request, res: express.Response) => {
+    app.get('/v1/info/code/textstyle', async (req: Request, res: Response, next) => {
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoCodeService.textstyle(mediaId);
+            res.result = result;
+        }
+        next();
     });
 };

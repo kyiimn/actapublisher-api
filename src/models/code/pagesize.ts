@@ -1,0 +1,274 @@
+import conn from '../../services/conn';
+
+export interface IPageSizeDef {
+    id?: number,
+    name: string,
+    paperType: string,
+    paperWidth: number,
+    paperHeight: number,
+    paperDirection: string,
+    linespacingSize: number,
+    linespacingUnit: string,
+    linespacingRatio: number,
+    columnMarginInside: number,
+    columnMarginOutside: number,
+    columnCount: number,
+    columnSize: number,
+    columnSpacing: number,
+    columnOther: number,
+    columnTotalSize: number,
+    lineMarginTop: number,
+    lineMarginBottom: number,
+    lineHeight: number,
+    lineCount: number,
+    lineSpacing: number,
+    lineOther: number,
+    lineTotalSize: number
+};
+
+export class PageSizeDef {
+    private _id: number;
+    private _name: string;
+    private _paperType: string;
+    private _paperWidth: number;
+    private _paperHeight: number;
+    private _paperDirection: string;
+    private _linespacingSize: number;
+    private _linespacingUnit: string;
+    private _linespacingRatio: number;
+    private _columnMarginInside: number;
+    private _columnMarginOutside: number;
+    private _columnCount: number;
+    private _columnSize: number;
+    private _columnSpacing: number;
+    private _columnOther: number;
+    private _columnTotalSize: number;
+    private _lineMarginTop: number;
+    private _lineMarginBottom: number;
+    private _lineHeight: number;
+    private _lineCount: number;
+    private _lineSpacing: number;
+    private _lineOther: number;
+    private _lineTotalSize: number;
+
+    private constructor(data: any) {
+        this._id = parseInt(data.id, 10);
+        this._name = data.name;
+        this._paperType = data.paper_type;
+        this._paperWidth = data.paper_width;
+        this._paperHeight = data.paper_height;
+        this._paperDirection = data.paper_direction;
+        this._linespacingSize = data.linespacing_size;
+        this._linespacingUnit = data.linespacing_unit;
+        this._linespacingRatio = data.linespacing_ratio;
+        this._columnMarginInside = data.col_margin_inside;
+        this._columnMarginOutside = data.col_margin_outside;
+        this._columnCount = data.col_count;
+        this._columnSize = data.col_size;
+        this._columnSpacing = data.col_spacing;
+        this._columnOther = data.col_other;
+        this._columnTotalSize = data.col_total_size;
+        this._lineMarginTop = data.line_margin_top;
+        this._lineMarginBottom = data.line_margin_bottom;
+        this._lineHeight = data.line_height;
+        this._lineCount = data.line_count;
+        this._lineSpacing = data.line_spacing;
+        this._lineOther = data.line_other;
+        this._lineTotalSize = data.line_total_size;
+    }
+
+    static async create(data: IPageSizeDef): Promise<PageSizeDef | null> {
+        const client = await conn.in.getClient();
+        try {
+            const res = await client.query(
+                'INSERT t_config_page_size_def (' +
+                ' name, paper_type, paper_width, paper_height, paper_direction, ' +
+                ' linespacing_size, linespacing_unit, linespacing_ratio, ' +
+                ' col_margin_inside, col_margin_outside, col_count, col_size, ' +
+                ' col_spacing, col_other, col_total_size, ' +
+                ' line_margin_top, line_margin_bottom, line_height, line_count, ' +
+                ' line_spacing, line_other, line_total_size ' +
+                ') VALUES (' +
+                ' $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22' +
+                ')', [
+                    data.name, data.paperType, data.paperWidth, data.paperHeight, data.paperDirection,
+                    data.linespacingSize, data.linespacingUnit, data.linespacingRatio,
+                    data.columnMarginInside, data.columnMarginOutside, data.columnCount, data.columnSize,
+                    data.columnSpacing, data.columnOther, data.columnTotalSize,
+                    data.lineMarginTop, data.lineMarginBottom, data.lineHeight, data.lineCount,
+                    data.lineSpacing, data.lineOther, data.lineTotalSize
+                ]
+            );
+            if (res.rowCount < 1) return null;
+
+            return this.get(res.rows[0].id);
+        } catch(e) {
+            return null;
+        } finally {
+            client.release();
+        }
+    }
+
+    static async get(id: number): Promise<PageSizeDef | null> {
+        const client = await conn.in.getClient();
+        try {
+            const res = await client.query(
+                'SELECT ' +
+                ' id, name, paper_type, paper_width, paper_height, paper_direction, ' +
+                ' linespacing_size, linespacing_unit, linespacing_ratio, ' +
+                ' col_margin_inside, col_margin_outside, col_count, col_size, ' +
+                ' col_spacing, col_other, col_total_size, ' +
+                ' line_margin_top, line_margin_bottom, line_height, line_count, ' +
+                ' line_spacing, line_other, line_total_size ' +
+                'FROM t_config_page_size_def WHERE id=$1', [id]
+            );
+            if (res.rowCount < 1) return null;
+            return new PageSizeDef(res.rows[0]);
+        } catch (e) {
+            return null;
+        } finally {
+            client.release();
+        }
+    }
+
+    static async select(): Promise<PageSizeDef[] | null> {
+        const client = await conn.in.getClient();
+        try {
+            const res = await client.query(
+                'SELECT ' +
+                ' id, name, paper_type, paper_width, paper_height, paper_direction, ' +
+                ' linespacing_size, linespacing_unit, linespacing_ratio, ' +
+                ' col_margin_inside, col_margin_outside, col_count, col_size, ' +
+                ' col_spacing, col_other, col_total_size, ' +
+                ' line_margin_top, line_margin_bottom, line_height, line_count, ' +
+                ' line_spacing, line_other, line_total_size ' +
+                'FROM t_config_page_size_def ORDER BY id '
+            );
+            let ret = [];
+            for (const row of res.rows) {
+                ret.push(new PageSizeDef(row));
+            }
+            return ret;
+        } catch (e) {
+            return null;
+        } finally { 
+            client.release();
+        }
+    }
+
+    async save() {
+        const client = await conn.in.getClient();
+        try {
+            const res = await client.query(
+                'UPDATE t_config_page_size_def SET ' +
+                ' name=$1, paper_type=$2, paper_width=$3, paper_height=$4, paper_direction=$5, ' +
+                ' linespacing_size=$6, linespacing_unit=$7, linespacing_ratio=$8, ' +
+                ' col_margin_inside=$9, col_margin_outside=$10, col_count=$11, col_size=$12, ' +
+                ' col_spacing=$13, col_other=$14, col_total_size=$15, ' +
+                ' line_margin_top=$16, line_margin_bottom=$17, line_height=$18, line_count=$19, ' +
+                ' line_spacing=$20, line_other=$21, line_total_size=$22 ' +
+                'WHERE id=$23',
+                [
+                    this.name, this.paperType, this.paperWidth, this.paperHeight, this.paperDirection,
+                    this.linespacingSize, this.linespacingUnit, this.linespacingRatio,
+                    this.columnMarginInside, this.columnMarginOutside, this.columnCount, this.columnSize,
+                    this.columnSpacing, this.columnOther, this.columnTotalSize,
+                    this.lineMarginTop, this.lineMarginBottom, this.lineHeight, this.lineCount,
+                    this.lineSpacing, this.lineOther, this.lineTotalSize, this.id
+                ]
+            );
+            return true;
+        } catch (e) {
+            return false;
+        } finally {
+            client.release();
+        }
+    }
+
+    async delete() {
+        const client = await conn.in.getClient();
+        try {
+            const res = await client.query('DELETE FROM t_config_page_size_def WHERE id=$1', [this.id]);
+            return true;
+        } catch (e) {
+            return false;
+        } finally {
+            client.release();
+        }
+    }
+
+    get id() { return this._id; }
+    get name() { return this._name; }
+    get paperType() { return this._paperType; }
+    get paperWidth() { return this._paperWidth; }
+    get paperHeight() { return this._paperHeight; }
+    get paperDirection() { return this._paperDirection; }
+    get linespacingSize() { return this._linespacingSize; }
+    get linespacingUnit() { return this._linespacingUnit; }
+    get linespacingRatio() { return this._linespacingRatio; }
+    get columnMarginInside() { return this._columnMarginInside; }
+    get columnMarginOutside() { return this._columnMarginOutside; }
+    get columnCount() { return this._columnCount; }
+    get columnSize() { return this._columnSize; }
+    get columnSpacing() { return this._columnSpacing; }
+    get columnOther() { return this._columnOther; }
+    get columnTotalSize() { return this._columnTotalSize; }
+    get lineMarginTop() { return this._lineMarginTop; }
+    get lineMarginBottom() { return this._lineMarginBottom; }
+    get lineHeight() { return this._lineHeight; }
+    get lineCount() { return this._lineCount; }
+    get lineSpacing() { return this._lineSpacing; }
+    get lineOther() { return this._lineOther; }
+    get lineTotalSize() { return this._lineTotalSize; }
+
+    get data() {
+        return {
+            id: this.id,
+            name: this.name,
+            paperType: this.paperType,
+            paperWidth: this.paperWidth,
+            paperHeight: this.paperHeight,
+            paperDirection: this.paperDirection,
+            linespacingSize: this.linespacingSize,
+            linespacingUnit: this.linespacingUnit,
+            linespacingRatio: this.linespacingRatio,
+            columnMarginInside: this.columnMarginInside,
+            columnMarginOutside: this.columnMarginOutside,
+            columnCount: this.columnCount,
+            columnSize: this.columnSize,
+            columnSpacing: this.columnSpacing,
+            columnOther: this.columnOther,
+            columnTotalSize: this.columnTotalSize,
+            lineMarginTop: this.lineMarginTop,
+            lineMarginBottom: this.lineMarginBottom,
+            lineHeight: this.lineHeight,
+            lineCount: this.lineCount,
+            lineSpacing: this.lineSpacing,
+            lineOther: this.lineOther,
+            lineTotalSize: this.lineTotalSize
+        };
+    }
+
+    set name(name) { this._name = name; }
+    set paperType(paperType) { this._paperType = paperType; }
+    set paperWidth(paperWidth) { this._paperWidth = paperWidth; }
+    set paperHeight(paperHeight) { this._paperHeight = paperHeight; }
+    set paperDirection(paperDirection) { this._paperDirection = paperDirection; }
+    set linespacingSize(linespacingSize) { this._linespacingSize = linespacingSize; }
+    set linespacingUnit(linespacingUnit) { this._linespacingUnit = linespacingUnit; }
+    set linespacingRatio(linespacingRatio) { this._linespacingRatio = linespacingRatio; }
+    set columnMarginInside(columnMarginInside) { this._columnMarginInside = columnMarginInside; }
+    set columnMarginOutside(columnMarginOutside) { this._columnMarginOutside = columnMarginOutside; }
+    set columnCount(columnCount) { this._columnCount = columnCount; }
+    set columnSize(columnSize) { this._columnSize = columnSize; }
+    set columnSpacing(columnSpacing) { this._columnSpacing = columnSpacing; }
+    set columnOther(columnOther) { this._columnOther = columnOther; }
+    set columnTotalSize(columnTotalSize) { this._columnTotalSize = columnTotalSize; }
+    set lineMarginTop(lineMarginTop) { this._lineMarginTop = lineMarginTop; }
+    set lineMarginBottom(lineMarginBottom) { this._lineMarginBottom = lineMarginBottom; }
+    set lineHeight(lineHeight) { this._lineHeight = lineHeight; }
+    set lineCount(lineCount) { this._lineCount = lineCount; }
+    set lineSpacing(lineSpacing) { this._lineSpacing = lineSpacing; }
+    set lineOther(lineOther) { this._lineOther = lineOther; }
+    set lineTotalSize(lineTotalSize) { this._lineTotalSize = lineTotalSize; }
+};

@@ -1,10 +1,10 @@
-import conn from '../conn';
+import conn from '../../services/conn';
 
 export interface IAccountUser {
-    id: number,
+    id?: number,
     mediaId: number,
     deptId: number,
-    loginId: string,
+    loginName: string,
     name: string,
     password?: string,
     email?: string,
@@ -20,7 +20,7 @@ export class AccountUser {
     private _id: number;
     private _mediaId: number;
     private _deptId: number;
-    private _loginId: string;
+    private _loginName: string;
     private _name: string;
     private _email?: string;
     private _byline?: string;
@@ -34,7 +34,7 @@ export class AccountUser {
         this._id = parseInt(data.id, 10);
         this._mediaId = parseInt(data.media_id, 10);
         this._deptId = parseInt(data.dept_id, 10);
-        this._loginId = data.login_id;
+        this._loginName = data.login_name;
         this._name = data.name;
         this._email = data.email;
         this._byline = data.byline;
@@ -49,12 +49,14 @@ export class AccountUser {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'INSERT t_account_user (id, media_id, dept_id, login_id, name, password, email, byline, use, level, rule, fixed, original_data) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id ',
-                [data.id, data.mediaId, data.deptId, data.loginId, data.name, data.password ? data.password : '', data.email ? data.email : null, data.byline ? data.byline : null, data.use ? 1 : 0, data.level, data.rule, data.fixed ? 1 : 0, data.originalData ? data.originalData : null]
+                'INSERT t_account_user (media_id, dept_id, login_name, name, password, email, byline, use, level, rule, fixed, original_data) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id ',
+                [data.mediaId, data.deptId, data.loginName, data.name, data.password ? data.password : '',
+                data.email ? data.email : null, data.byline ? data.byline : null, data.use ? 1 : 0, data.level,
+                data.rule, data.fixed ? 1 : 0, data.originalData ? data.originalData : null]
             );
             if (res.rowCount < 1) return null;
 
-            return this.getById(res.rows[0].id);
+            return this.get(res.rows[0].id);
         } catch(e) {
             return null;
         } finally {
@@ -62,11 +64,11 @@ export class AccountUser {
         }
     }
 
-    static async getById(id: number): Promise<AccountUser | null> {
+    static async get(id: number): Promise<AccountUser | null> {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, dept_id, login_id, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE id=$1',
+                'SELECT id, media_id, dept_id, login_name, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE id=$1',
                 [id]
             );
             if (res.rowCount < 1) return null;
@@ -78,12 +80,12 @@ export class AccountUser {
         }
     }
 
-    static async getByLoginId(loginId: string): Promise<AccountUser | null> {
+    static async getByLoginName(loginName: string): Promise<AccountUser | null> {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, dept_id, login_id, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE login_id=$1',
-                [loginId]
+                'SELECT id, media_id, dept_id, login_name, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE login_name=$1',
+                [loginName]
             );
             if (res.rowCount < 1) return null;
             return new AccountUser(res.rows[0]);
@@ -94,11 +96,11 @@ export class AccountUser {
         }
     }
 
-    static async selectByLoginIdWithPassword(loginId: string, password: string): Promise<AccountUser | null> {
+    static async getByLoginIdWithPassword(loginId: string, password: string): Promise<AccountUser | null> {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, dept_id, login_id, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE login_id=$1 AND password=$2',
+                'SELECT id, media_id, dept_id, login_name, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE login_name=$1 AND password=$2',
                 [loginId, password]
             );
             if (res.rowCount < 1) return null;
@@ -114,7 +116,7 @@ export class AccountUser {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, dept_id, login_id, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE media_id=$1 ORDER BY dept_id, login_id ',
+                'SELECT id, media_id, dept_id, login_name, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE media_id=$1 ORDER BY dept_id, login_name ',
                 [mediaId]
             );
             let ret = [];
@@ -171,7 +173,7 @@ export class AccountUser {
     get id() { return this._id; }
     get mediaId() { return this._mediaId; }
     get deptId() { return this._deptId; }
-    get loginId() { return this._loginId; }
+    get loginName() { return this._loginName; }
     get name() { return this._name; }
     get email() { return this._email; }
     get byline() { return this._byline; }
@@ -185,7 +187,7 @@ export class AccountUser {
             id: this.id,
             mediaId: this.mediaId,
             deptId: this.deptId,
-            loginId: this.loginId,
+            loginName: this.loginName,
             name: this.name,
             email: this.email,
             byline: this.byline,

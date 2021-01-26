@@ -12,10 +12,10 @@ CREATE TABLE t_account_dept (
 
 -- DROP TABLE t_account_user;
 CREATE TABLE t_account_user (
-    id bigint NOT NULL,
+    id bigserial NOT NULL,
     media_id bigint NOT NULL,
     dept_id bigint NOT NULL,
-    login_id character varying (128) NOT NULL,
+    login_name character varying (128) NOT NULL,
     name character varying (128) NOT NULL,
     password character varying (128) NOT NULL,
     email character varying (128),
@@ -26,6 +26,6 @@ CREATE TABLE t_account_user (
     fixed integer NOT NULL,
     original_data jsonb,
     CONSTRAINT pk_account_user_id PRIMARY KEY (id),
-    CONSTRAINT unique_account_user UNIQUE (login_id)
+    CONSTRAINT unique_account_user UNIQUE (login_name)
 ) WITH (OIDS = FALSE);
 
