@@ -34,21 +34,21 @@ export class TextStyleDef {
     private _strikeline: boolean;
     private _indent: number;
 
-    private constructor(data: any) {
-        this._id = parseInt(data.id, 10);
-        this._mediaId = parseInt(data.media_id, 10);
-        this._name = data.name;
-        this._sort = data.sort;
-        this._fontId = parseInt(data.font_id, 10);
-        this._fontSize = data.font_size;
-        this._color = data.color;
-        this._xscale = data.xscale;
-        this._letterSpacing = data.letter_spacing;
-        this._lineHeight = data.line_height;
-        this._textAlign = data.text_align;
-        this._underline = data.underline ? true : false;
-        this._strikeline = data.strikeline ? true : false;
-        this._indent = data.indent;
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        this._mediaId = parseInt(dbdata.media_id, 10);
+        this._name = dbdata.name;
+        this._sort = dbdata.sort;
+        this._fontId = parseInt(dbdata.font_id, 10);
+        this._fontSize = dbdata.font_size;
+        this._color = dbdata.color;
+        this._xscale = dbdata.xscale;
+        this._letterSpacing = dbdata.letter_spacing;
+        this._lineHeight = dbdata.line_height;
+        this._textAlign = dbdata.text_align;
+        this._underline = dbdata.underline ? true : false;
+        this._strikeline = dbdata.strikeline ? true : false;
+        this._indent = dbdata.indent;
     }
 
     static async create(data: ITextStyleDef): Promise<TextStyleDef | null> {

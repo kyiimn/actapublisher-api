@@ -13,11 +13,11 @@ export class StorageDef {
     private _basePath: string;
     private _archive: boolean;
 
-    private constructor(data: any) {
-        this._id = parseInt(data.id, 10);
-        this._name = data.name;
-        this._basePath = data.base_path;
-        this._archive = data.archive ? true : false;
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        this._name = dbdata.name;
+        this._basePath = dbdata.base_path;
+        this._archive = dbdata.archive ? true : false;
     }
 
     static async create(data: IStorageDef): Promise<StorageDef | null> {

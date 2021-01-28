@@ -19,14 +19,14 @@ export class AccountDept {
     private _group: boolean;
     private _groupMemberList?: number[];
 
-    private constructor(data: any) {
-        this._id = parseInt(data.id, 10);
-        this._mediaId = parseInt(data.media_id, 10);
-        this._name = data.name;
-        this._sort = data.sort;
-        this._invalidFlag = data.invalid_flag ? true : false;
-        this._group = data.group ? true : false;
-        this._groupMemberList = data.groupMemberList || [];
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        this._mediaId = parseInt(dbdata.media_id, 10);
+        this._name = dbdata.name;
+        this._sort = dbdata.sort;
+        this._invalidFlag = dbdata.invalid_flag ? true : false;
+        this._group = dbdata.group ? true : false;
+        this._groupMemberList = dbdata.groupMemberList || [];
     }
 
     static async create(data: IAccountDept): Promise<AccountDept | null> {

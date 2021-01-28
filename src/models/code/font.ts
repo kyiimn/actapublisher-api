@@ -19,14 +19,14 @@ export class FontDef {
     private _fileSize: number;
     private _sort: number;
 
-    private constructor(dbData: any) {
-        this._id = parseInt(dbData.id, 10);
-        this._mediaId = parseInt(dbData.media_id, 10);
-        this._name = dbData.name;
-        this._fileStorageId = parseInt(dbData.file_storage_id, 10);
-        this._fileExtension = dbData.file_extension;
-        this._fileSize = dbData.file_size,
-        this._sort = dbData.sort;
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        this._mediaId = parseInt(dbdata.media_id, 10);
+        this._name = dbdata.name;
+        this._fileStorageId = parseInt(dbdata.file_storage_id, 10);
+        this._fileExtension = dbdata.file_extension;
+        this._fileSize = dbdata.file_size,
+        this._sort = dbdata.sort;
     }
 
     static async create(data: IFontDef): Promise<FontDef | null> {

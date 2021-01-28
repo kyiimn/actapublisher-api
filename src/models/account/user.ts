@@ -30,19 +30,19 @@ export class AccountUser {
     private _fixed: boolean;
     private _originalData?: any;
 
-    private constructor(data: any) {
-        this._id = parseInt(data.id, 10);
-        this._mediaId = parseInt(data.media_id, 10);
-        this._deptId = parseInt(data.dept_id, 10);
-        this._loginName = data.login_name;
-        this._name = data.name;
-        this._email = data.email;
-        this._byline = data.byline;
-        this._use = data.use ? true : false;
-        this._level = data.level;
-        this._rule = data.rule;
-        this._fixed = data.fixed ? true : false;
-        this._originalData = data.original_data || {};
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        this._mediaId = parseInt(dbdata.media_id, 10);
+        this._deptId = parseInt(dbdata.dept_id, 10);
+        this._loginName = dbdata.login_name;
+        this._name = dbdata.name;
+        this._email = dbdata.email;
+        this._byline = dbdata.byline;
+        this._use = dbdata.use ? true : false;
+        this._level = dbdata.level;
+        this._rule = dbdata.rule;
+        this._fixed = dbdata.fixed ? true : false;
+        this._originalData = dbdata.original_data || {};
     }
 
     static async create(data: IAccountUser): Promise<AccountUser | null> {

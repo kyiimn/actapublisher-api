@@ -17,13 +17,13 @@ export class ClosingTimeDef {
     private _page: number;
     private _editionId: number;
 
-    private constructor(data: any) {
-        this._id = parseInt(data.id, 10);
-        if (data.closing_date) this._closingDate = data.closing_date;
-        this._closingTime = data.closing_time;
-        this._mediaId = parseInt(data.media_id, 10);
-        this._page = data.page;
-        this._editionId = parseInt(data.edition_id, 10);
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        if (dbdata.closing_date) this._closingDate = dbdata.closing_date;
+        this._closingTime = dbdata.closing_time;
+        this._mediaId = parseInt(dbdata.media_id, 10);
+        this._page = dbdata.page;
+        this._editionId = parseInt(dbdata.edition_id, 10);
     }
 
     static async create(data: IClosingTimeDef): Promise<ClosingTimeDef | null> {

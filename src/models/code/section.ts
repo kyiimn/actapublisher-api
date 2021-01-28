@@ -15,12 +15,12 @@ export class SectionDef {
     private _mediaId: number;
     private _use: boolean;
 
-    private constructor(data: any) {
-        this._id = parseInt(data.id, 10);
-        this._code = data.code;
-        this._name = data.name;
-        this._mediaId = parseInt(data.media_id, 10);
-        this._use = data.use ? true : false;
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        this._code = dbdata.code;
+        this._name = dbdata.name;
+        this._mediaId = parseInt(dbdata.media_id, 10);
+        this._use = dbdata.use ? true : false;
     }
 
     static async create(data: ISectionDef): Promise<SectionDef | null> {

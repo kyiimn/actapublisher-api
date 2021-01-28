@@ -1,25 +1,25 @@
 import conn from '../../services/conn';
 
-export interface IPrintTypeDef {
-    id: number,
-    name: string
+export interface IPageTitle {
+    id?: number,
+    title: string
 };
 
-export class PrintTypeDef {
+export class PageTitle {
     private _id: number;
-    private _name: string;
+    private _title: string;
 
     private constructor(dbdata: any) {
         this._id = parseInt(dbdata.id, 10);
-        this._name = dbdata.name;
+        this._title = dbdata.title;
     }
 
-    static async create(data: IPrintTypeDef): Promise<PrintTypeDef | null> {
+    static async create(data: IPageTitle): Promise<PageTitle | null> {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'INSERT t_config_print_type_def (id, name) VALUES ($1, $2) RETURNING id',
-                [data.id, data.name]
+                'INSERT t_page_title (name) VALUES ($1, $2) RETURNING id',
+                [data.title]
             );
             if (res.rowCount < 1) return null;
 
@@ -31,12 +31,12 @@ export class PrintTypeDef {
         }
     }
 
-    static async get(id: number): Promise<PrintTypeDef | null> {
+    static async get(id: number): Promise<PageTitle | null> {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('SELECT id, name FROM t_config_print_type_def WHERE id=$1', [id]);
+            const res = await client.query('SELECT id, name FROM t_page_title WHERE id=$1', [id]);
             if (res.rowCount < 1) return null;
-            return new PrintTypeDef(res.rows[0]);
+            return new PageTitle(res.rows[0]);
         } catch (e) {
             return null;
         } finally {
@@ -44,13 +44,13 @@ export class PrintTypeDef {
         }
     }
 
-    static async select(): Promise<PrintTypeDef[] | null> {
+    static async select(): Promise<PageTitle[] | null> {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('SELECT id, name FROM t_config_print_type_def ORDER BY id ');
+            const res = await client.query('SELECT id, name FROM t_page_title ORDER BY id ');
             let ret = [];
             for (const row of res.rows) {
-                ret.push(new PrintTypeDef(row));
+                ret.push(new PageTitle(row));
             }
             return ret;
         } catch (e) {
@@ -64,8 +64,8 @@ export class PrintTypeDef {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'UPDATE t_config_print_type_def SET name=$1 WHERE id=$2',
-                [this.name, this.id]
+                'UPDATE t_page_title SET name=$1 WHERE id=$2',
+                [this.title, this.id]
             );
             return true;
         } catch (e) {
@@ -78,7 +78,7 @@ export class PrintTypeDef {
     async delete() {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('DELETE FROM t_config_print_type_def WHERE id=$1', [this.id]);
+            const res = await client.query('DELETE FROM t_page_title WHERE id=$1', [this.id]);
             return true;
         } catch (e) {
             return false;
@@ -88,13 +88,13 @@ export class PrintTypeDef {
     }
 
     get id() { return this._id; }
-    get name() { return this._name; }
+    get title() { return this._title; }
     get data() {
         return {
             id: this.id,
-            name: this.name
+            title: this.title
         };
     }
 
-    set name(name) { this._name = name; }
+    set title(title) { this._title = title; }
 };

@@ -121,7 +121,7 @@ CREATE TABLE t_page_print (
 CREATE TABLE t_page_week_plan (
     id bigserial NOT NULL,
     media_id bigint NOT NULL,
-    pub_date character varying (8) NOT NULL,
+    week integer NOT NULL,
     page integer NOT NULL,
     section_id bigint NULL,
     section_page integer NOT NULL,
@@ -131,6 +131,6 @@ CREATE TABLE t_page_week_plan (
     user_id bigint NOT NULL,
     whole integer NOT NULL,
     CONSTRAINT pk_page_week_plan_id PRIMARY KEY (id),
-    CONSTRAINT unique_page_week_plan UNIQUE (media_id, pub_date, page)
+    CONSTRAINT unique_page_week_plan UNIQUE (media_id, week, page)
 ) WITH (OIDS = FALSE);
 

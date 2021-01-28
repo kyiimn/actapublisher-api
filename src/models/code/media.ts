@@ -11,10 +11,10 @@ export class MediaDef {
     private _name: string;
     private _type: string;
 
-    private constructor(data: any) {
-        this._id = parseInt(data.id, 10);
-        this._name = data.name;
-        this._type = data.type;
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        this._name = dbdata.name;
+        this._type = dbdata.type;
     }
 
     static async create(data: IMediaDef): Promise<MediaDef | null> {

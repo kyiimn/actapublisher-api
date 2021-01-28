@@ -19,14 +19,14 @@ export class CodeClassDef {
     private _sort?: number;
     private _use: boolean;
 
-    private constructor(data: any) {
-        this._id = parseInt(data.id, 10);
-        this._class = parseInt(data.class, 10);
-        this._code = data.code;
-        this._name = data.name;
-        if (data.media_id) this._mediaId = parseInt(data.media_id, 10);
-        if (data.sort) this._sort = data.sort;
-        this._use = data.use ? true : false;
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        this._class = parseInt(dbdata.class, 10);
+        this._code = dbdata.code;
+        this._name = dbdata.name;
+        if (dbdata.media_id) this._mediaId = parseInt(dbdata.media_id, 10);
+        if (dbdata.sort) this._sort = dbdata.sort;
+        this._use = dbdata.use ? true : false;
     }
 
     static async create(data: ICodeClassDef): Promise<CodeClassDef | null> {

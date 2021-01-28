@@ -9,9 +9,9 @@ export class ColorDef {
     private _id: number;
     private _name: string;
 
-    private constructor(data: any) {
-        this._id = parseInt(data.id, 10);
-        this._name = data.name;
+    private constructor(dbdata: any) {
+        this._id = parseInt(dbdata.id, 10);
+        this._name = dbdata.name;
     }
 
     static async create(data: IColorDef): Promise<ColorDef | null> {

@@ -7,6 +7,8 @@ CREATE TABLE t_adver (
     media_id bigint NOT NULL,
     dept_id bigint,
     user_id bigint,
+    reg_date timestamp with time zone NOT NULL,
+    pub_date character varying (8) NOT NULL,
     edition_id bigint NOT NULL,
     page integer NOT NULL,
     adver_size_id bigint NOT NULL,
@@ -43,6 +45,8 @@ CREATE TABLE t_article (
     media_id bigint NOT NULL,
     dept_id bigint,
     user_id bigint,
+    reg_date timestamp with time zone NOT NULL,
+    pub_date character varying (8) NOT NULL,
     edition_id bigint NOT NULL,
     page integer NOT NULL,
     send_id character varying (128),
@@ -68,6 +72,8 @@ CREATE TABLE t_image (
     media_id bigint NOT NULL,
     dept_id bigint,
     user_id bigint,
+    reg_date timestamp with time zone NOT NULL,
+    pub_date character varying (8) NOT NULL,
     edition_id bigint NOT NULL,
     page integer NOT NULL,
     send_id character varying (128),
@@ -90,4 +96,3 @@ CREATE TABLE t_image (
     lock_user_id bigint,
     CONSTRAINT pk_image_id PRIMARY KEY (id)
 ) WITH (OIDS = FALSE);
-
