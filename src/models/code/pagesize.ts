@@ -1,14 +1,18 @@
 import conn from '../../services/conn';
+import { CodeClassDef } from '../code/codeclass';
 
 export interface IPageSizeDef {
     id?: number,
     name: string,
     paperType: string,
+    paperTypeName?: string,
     paperWidth: number,
     paperHeight: number,
     paperDirection: string,
+    paperDirectionName?: string,
     linespacingSize: number,
     linespacingUnit: string,
+    linespacingUnitName?: string,
     linespacingRatio: number,
     columnMarginInside: number,
     columnMarginOutside: number,
@@ -30,11 +34,14 @@ export class PageSizeDef {
     private _id: number;
     private _name: string;
     private _paperType: string;
+    private _paperTypeName: string;
     private _paperWidth: number;
     private _paperHeight: number;
     private _paperDirection: string;
+    private _paperDirectionName: string;
     private _linespacingSize: number;
     private _linespacingUnit: string;
+    private _linespacingUnitName: string;
     private _linespacingRatio: number;
     private _columnMarginInside: number;
     private _columnMarginOutside: number;
@@ -55,11 +62,14 @@ export class PageSizeDef {
         this._id = parseInt(dbdata.id, 10);
         this._name = dbdata.name;
         this._paperType = dbdata.paper_type;
+        this._paperTypeName = dbdata.paper_type_name;
         this._paperWidth = dbdata.paper_width;
         this._paperHeight = dbdata.paper_height;
         this._paperDirection = dbdata.paper_direction;
+        this._paperDirectionName = dbdata.paper_direction_name;
         this._linespacingSize = dbdata.linespacing_size;
         this._linespacingUnit = dbdata.linespacing_unit;
+        this._linespacingUnitName = dbdata.linespacing_unit_name;
         this._linespacingRatio = dbdata.linespacing_ratio;
         this._columnMarginInside = dbdata.col_margin_inside;
         this._columnMarginOutside = dbdata.col_margin_outside;
@@ -114,13 +124,19 @@ export class PageSizeDef {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' id, name, paper_type, paper_width, paper_height, paper_direction, ' +
-                ' linespacing_size, linespacing_unit, linespacing_ratio, ' +
-                ' col_margin_inside, col_margin_outside, col_count, col_size, ' +
-                ' col_spacing, col_other, col_total_size, ' +
-                ' line_margin_top, line_margin_bottom, line_height, line_count, ' +
-                ' line_spacing, line_other, line_total_size ' +
-                'FROM t_config_page_size_def WHERE id=$1', [id]
+                ' P.id, P.name, P.paper_type, P.paper_width, P.paper_height, P.paper_direction, ' +
+                ' P.linespacing_size, P.linespacing_unit, P.linespacing_ratio, ' +
+                ' P.col_margin_inside, P.col_margin_outside, P.col_count, P.col_size, ' +
+                ' P.col_spacing, P.col_other, P.col_total_size, ' +
+                ' P.line_margin_top, P.line_margin_bottom, P.line_height, P.line_count, ' +
+                ' P.line_spacing, P.line_other, P.line_total_size, ' +
+                ' C1.name paper_type_name, C2.name paper_direction_name, C3.name linespacing_unit_name ' +
+                'FROM t_config_page_size_def P ' +
+                'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code = P.paper_type ' +
+                'LEFT JOIN t_config_code_def C2 ON C2.class=$2 AND C2.code = P.paper_direction ' +
+                'LEFT JOIN t_config_code_def C3 ON C3.class=$3 AND C3.code = P.linespacing_unit ' +
+                'WHERE P.id = $4',
+                [CodeClassDef.CLASS_PAPERTYPE, CodeClassDef.CLASS_PAPERDIRECTION, CodeClassDef.CLASS_UNIT, id]
             );
             if (res.rowCount < 1) return null;
             return new PageSizeDef(res.rows[0]);
@@ -136,13 +152,18 @@ export class PageSizeDef {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' id, name, paper_type, paper_width, paper_height, paper_direction, ' +
-                ' linespacing_size, linespacing_unit, linespacing_ratio, ' +
-                ' col_margin_inside, col_margin_outside, col_count, col_size, ' +
-                ' col_spacing, col_other, col_total_size, ' +
-                ' line_margin_top, line_margin_bottom, line_height, line_count, ' +
-                ' line_spacing, line_other, line_total_size ' +
-                'FROM t_config_page_size_def ORDER BY id '
+                ' P.id, P.name, P.paper_type, P.paper_width, P.paper_height, P.paper_direction, ' +
+                ' P.linespacing_size, P.linespacing_unit, P.linespacing_ratio, ' +
+                ' P.col_margin_inside, P.col_margin_outside, P.col_count, P.col_size, ' +
+                ' P.col_spacing, P.col_other, P.col_total_size, ' +
+                ' P.line_margin_top, P.line_margin_bottom, P.line_height, P.line_count, ' +
+                ' P.line_spacing, P.line_other, P.line_total_size, ' +
+                ' C1.name paper_type_name, C2.name paper_direction_name, C3.name linespacing_unit_name ' +
+                'FROM t_config_page_size_def P ' +
+                'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code = P.paper_type ' +
+                'LEFT JOIN t_config_code_def C2 ON C2.class=$2 AND C2.code = P.paper_direction ' +
+                'LEFT JOIN t_config_code_def C3 ON C3.class=$3 AND C3.code = P.linespacing_unit ' +
+                'ORDER BY P.id '
             );
             let ret = [];
             for (const row of res.rows) {
@@ -200,11 +221,14 @@ export class PageSizeDef {
     get id() { return this._id; }
     get name() { return this._name; }
     get paperType() { return this._paperType; }
+    get paperTypeName() { return this._paperTypeName; }
     get paperWidth() { return this._paperWidth; }
     get paperHeight() { return this._paperHeight; }
     get paperDirection() { return this._paperDirection; }
+    get paperDirectionName() { return this._paperDirectionName; }
     get linespacingSize() { return this._linespacingSize; }
     get linespacingUnit() { return this._linespacingUnit; }
+    get linespacingUnitName() { return this._linespacingUnitName; }
     get linespacingRatio() { return this._linespacingRatio; }
     get columnMarginInside() { return this._columnMarginInside; }
     get columnMarginOutside() { return this._columnMarginOutside; }
@@ -221,16 +245,19 @@ export class PageSizeDef {
     get lineOther() { return this._lineOther; }
     get lineTotalSize() { return this._lineTotalSize; }
 
-    get data() {
+    get data(): IPageSizeDef {
         return {
             id: this.id,
             name: this.name,
             paperType: this.paperType,
+            paperTypeName: this.paperTypeName,
             paperWidth: this.paperWidth,
             paperHeight: this.paperHeight,
             paperDirection: this.paperDirection,
+            paperDirectionName: this.paperDirectionName,
             linespacingSize: this.linespacingSize,
             linespacingUnit: this.linespacingUnit,
+            linespacingUnitName: this.linespacingUnitName,
             linespacingRatio: this.linespacingRatio,
             columnMarginInside: this.columnMarginInside,
             columnMarginOutside: this.columnMarginOutside,

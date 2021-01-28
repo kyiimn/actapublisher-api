@@ -36,21 +36,21 @@ export class CodeClassDef {
     static readonly CLASS_MEDIATYPE = 1;
     static readonly CLASS_SOURCE = 2;
     static readonly CLASS_COPYRIGHT = 3;
-    static readonly CLASS_ADTYPE = 5;
+    static readonly CLASS_ADVERTYPE = 5;
     static readonly CLASS_BODYTYPE = 6;
     static readonly CLASS_ARTICLETYPE = 7;
     static readonly CLASS_ARTICLESTATUS = 8;
     static readonly CLASS_IMAGETYPE = 9;
-    static readonly CLASS_PAGETYPE = 10;
-    static readonly CLASS_ARROWTYPE = 11;
+    static readonly CLASS_PAPERTYPE = 10;
+    static readonly CLASS_PAPERDIRECTION = 11;
     static readonly CLASS_UNIT = 12;
     static readonly CLASS_OBJECTTYPE = 13;
     static readonly CLASS_FRAMETYPE = 14;
-    static readonly CLASS_PAGEEDITSTATUS = 15;
+    static readonly CLASS_PAGESTATUS = 15;
     static readonly CLASS_PAGEPRINTSTATUS = 16;
     static readonly CLASS_IMAGESTATUS = 17;
-    static readonly CLASS_PAGEADEDITSTATUS = 18;
-    static readonly CLASS_ADSTATUS = 19;
+    static readonly CLASS_PAGEADVERSTATUS = 18;
+    static readonly CLASS_ADVERSTATUS = 19;
 
     static async create(data: ICodeClassDef): Promise<CodeClassDef | null> {
         const client = await conn.in.getClient();

@@ -97,7 +97,7 @@ export class StorageDef {
     get name() { return this._name; }
     get basePath() { return this._basePath; }
     get archive() { return this._archive; }
-    get data() {
+    get data(): IStorageDef {
         return {
             id: this.id,
             name: this.name,

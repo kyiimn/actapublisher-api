@@ -89,7 +89,7 @@ export class ColorDef {
 
     get id() { return this._id; }
     get name() { return this._name; }
-    get data() {
+    get data(): IColorDef {
         return {
             id: this.id,
             name: this.name

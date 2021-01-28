@@ -89,7 +89,7 @@ export class PrintTypeDef {
 
     get id() { return this._id; }
     get name() { return this._name; }
-    get data() {
+    get data(): IPrintTypeDef {
         return {
             id: this.id,
             name: this.name

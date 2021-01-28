@@ -7,9 +7,11 @@ export interface IPagePattern {
     title: string,
     regDate: string,
     regUserId: number,
+    regUserName?: string,
     modifyDate?: string,
     modifyUserId?: number,
-    data: { [key: string]: any }
+    modifyUserName?: string,
+    rawdata: { [key: string]: any }
 };
 
 export class PagePattern extends IPage {
@@ -17,8 +19,10 @@ export class PagePattern extends IPage {
     private _title: string;
     private _regDate: string;
     private _regUserId: number;
+    private _regUserName: string;
     private _modifyDate?: string;
     private _modifyUserId?: number;
+    private _modifyUserName?: string;
     private _data: { [key: string]: any };
 
     private constructor(dbdata: any) {
@@ -27,9 +31,11 @@ export class PagePattern extends IPage {
         this._id = parseInt(dbdata.id, 10);
         this._title = dbdata.title;
         this._regDate = dbdata.reg_date;
-        this._regUserId = dbdata.reg_user_id;
+        this._regUserId = parseInt(dbdata.reg_user_id, 10);
+        this._regUserName = dbdata.reg_user_name;
         if (dbdata.modify_date) this._modifyDate = dbdata.modify_date;
         if (dbdata.modify_user_id) this._modifyUserId = parseInt(dbdata.modify_user_id, 10);
+        if (dbdata.modify_user_name) this._modifyUserName = dbdata.modify_user_name;
         this._data = dbdata.data;
     }
 
@@ -37,17 +43,21 @@ export class PagePattern extends IPage {
     get title() { return this._title; }
     get regDate() { return this._regDate; }
     get regUserId() { return this._regUserId; }
+    get regUserName() { return this._regUserName; }
     get modifyDate() { return this._modifyDate; }
     get modifyUserId() { return this._modifyUserId; }
+    get modifyUserName() { return this._modifyUserName; }
     get rawdata() { return this._data; }
-    get data() {
+    get data(): IPagePattern {
         return {
             id: this.id,
             title: this.title,
             regDate: this.regDate,
             regUserId: this.regUserId,
+            regUserName: this.regUserName,
             modifyDate: this.modifyDate,
             modifyUserId: this.modifyUserId,
+            modifyUserName: this.modifyUserName,
             rawdata: this.rawdata
         }
     }
@@ -60,7 +70,7 @@ export class PagePattern extends IPage {
         try {
             const res = await client.query(
                 'INSERT t_page_pattern (title, reg_date, reg_user_id, data, lock) VALUES ($1, now(), $2, $3, 1) RETURNING id',
-                [data.title]
+                [data.title, data.regUserId, data.rawdata]
             );
             if (res.rowCount < 1) return null;
 
@@ -77,10 +87,14 @@ export class PagePattern extends IPage {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' id, title, ' +
-                ' TO_CHAR(reg_date, \'YYYYMMDDHH24MMISS\') reg_date, reg_user_id, ' +
-                ' TO_CHAR(modify_date, \'YYYYMMDDHH24MMISS\') modify_date, modify_user_id ' +
-                'FROM t_page_pattern WHERE id=$1 ',
+                ' P.id, P.title, ' +
+                ' TO_CHAR(P.reg_date, \'YYYYMMDDHH24MMISS\') reg_date, P.reg_user_id, ' +
+                ' TO_CHAR(P.modify_date, \'YYYYMMDDHH24MMISS\') modify_date, P.modify_user_id ' +
+                ' P.data, U1.name reg_user_name, U2.name modify_user_name ' +
+                'FROM t_page_pattern P ' +
+                'LEFT JOIN t_account_user U1 ON U1.id = P.reg_user_id ' +
+                'LEFT JOIN t_account_user U2 ON U2.id = P.modify_user_id ' +
+                'WHERE P.id=$1 ',
                 [id]
             );
             if (res.rowCount < 1) return null;
@@ -96,11 +110,14 @@ export class PagePattern extends IPage {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT ' +
-                ' id, title, ' +
-                ' TO_CHAR(reg_date, \'YYYYMMDDHH24MMISS\') reg_date, reg_user_id, ' +
-                ' TO_CHAR(modify_date, \'YYYYMMDDHH24MMISS\') modify_date, modify_user_id ' +
-                'FROM t_page_pattern ORDER BY reg_date DESC ',
+                ' P.id, P.title, ' +
+                ' TO_CHAR(P.reg_date, \'YYYYMMDDHH24MMISS\') reg_date, P.reg_user_id, ' +
+                ' TO_CHAR(P.modify_date, \'YYYYMMDDHH24MMISS\') modify_date, P.modify_user_id ' +
+                ' P.data, U1.name reg_user_name, U2.name modify_user_name ' +
+                'FROM t_page_pattern P ' +
+                'LEFT JOIN t_account_user U1 ON U1.id = P.reg_user_id ' +
+                'LEFT JOIN t_account_user U2 ON U2.id = P.modify_user_id ' +
+                'ORDER BY P.reg_date DESC ',
             );
             let ret = [];
             for (const row of res.rows) {

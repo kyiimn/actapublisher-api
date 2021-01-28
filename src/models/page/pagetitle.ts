@@ -89,7 +89,7 @@ export class PageTitle {
 
     get id() { return this._id; }
     get title() { return this._title; }
-    get data() {
+    get data(): IPageTitle {
         return {
             id: this.id,
             title: this.title

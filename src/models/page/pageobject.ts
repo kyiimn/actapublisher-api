@@ -1,12 +1,15 @@
 import conn from '../../services/conn';
+import { CodeClassDef } from '../code/codeclass';
 
 export interface IPageObject {
     id?: number,
     pageId: string,
     objectType: string,
+    objectTypeName?: string,
     objectId: string,
     frameId: string,
     frameType: string,
+    frameTypeName?: string,
     posX: number,
     posY: number,
     width: number,
@@ -18,9 +21,11 @@ export class PageObject {
     private _id: number;
     private _pageId: string;
     private _objectType: string;
+    private _objectTypeName: string;
     private _objectId: string;
     private _frameId: string;
     private _frameType: string;
+    private _frameTypeName: string;
     private _posX: number;
     private _posY: number;
     private _width: number;
@@ -31,9 +36,11 @@ export class PageObject {
         this._id = parseInt(dbdata.id, 10);
         this._pageId = dbdata.page_id;
         this._objectType = dbdata.object_type;
+        this._objectTypeName = dbdata.object_type_name;
         this._objectId = dbdata.object_id;
         this._frameId = dbdata.frame_id;
         this._frameType = dbdata.frame_type;
+        this._frameTypeName = dbdata.frame_type_name;
         this._posX = dbdata.pos_x;
         this._posY = dbdata.pos_y;
         this._width = dbdata.width;
@@ -44,22 +51,26 @@ export class PageObject {
     get id() { return this._id; }
     get pageId() { return this._pageId; }
     get objectType() { return this._objectType; }
+    get objectTypeName() { return this._objectTypeName; }
     get objectId() { return this._objectId; }
     get frameId() { return this._frameId; }
     get frameType() { return this._frameType; }
+    get frameTypeName() { return this._frameTypeName; }
     get posX() { return this._posX; }
     get posY() { return this._posY; }
     get width() { return this._width; }
     get height() { return this._height; }
     get option() { return this._option; }
-    get data() {
+    get data(): IPageObject {
         return {
             id: this.id,
             pageId: this.pageId,
             objectType: this.objectType,
+            objectTypeName: this.objectTypeName,
             objectId: this.objectId,
             frameId: this.frameId,
             frameType: this.frameType,
+            frameTypeName: this.frameTypeName,
             posX: this.posX,
             posY: this.posY,
             width: this.width,
@@ -102,9 +113,13 @@ export class PageObject {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' id, page_id, object_type, object_id, frame_id, frame_type, pos_x, pos_y, width, height, option ' +
-                'FROM t_page_object WHERE id=$1 ',
-                [id]
+                ' O.id, O.page_id, O.object_type, O.object_id, O.frame_id, O.frame_type, O.pos_x, O.pos_y, O.width, O.height, O.option, ' +
+                ' C1.name object_type_name, C2.name frame_type_name ' +
+                'FROM t_page_object O ' +
+                'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code = O.object_type ' +
+                'LEFT JOIN t_config_code_def C2 ON C2.class=$2 AND C2.code = O.frame_type ' +
+                'WHERE O.id=$3 ',
+                [CodeClassDef.CLASS_OBJECTTYPE, CodeClassDef.CLASS_FRAMETYPE, id]
             );
             if (res.rowCount < 1) return null;
             return new PageObject(res.rows[0]);
@@ -120,9 +135,13 @@ export class PageObject {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' id, page_id, object_type, object_id, frame_id, frame_type, pos_x, pos_y, width, height, option ' +
-                'FROM t_page_object WHERE page_id=$1 ORDER BY pos_x ',
-                [pageId]
+                ' O.id, O.page_id, O.object_type, O.object_id, O.frame_id, O.frame_type, O.pos_x, O.pos_y, O.width, O.height, O.option, ' +
+                ' C1.name object_type_name, C2.name frame_type_name ' +
+                'FROM t_page_object O ' +
+                'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code = O.object_type ' +
+                'LEFT JOIN t_config_code_def C2 ON C2.class=$2 AND C2.code = O.frame_type ' +
+                'WHERE O.page_id=$3 ORDER BY O.pos_x ',
+                [CodeClassDef.CLASS_OBJECTTYPE, CodeClassDef.CLASS_FRAMETYPE, pageId]
             );
             let ret = [];
             for (const row of res.rows) {

@@ -6,11 +6,15 @@ export interface IPageTemplate {
     id?: number,
     title: string,
     pageSizeId: number,
+    pageSizeName?: string,
     regDate: string,
     regUserId: number,
+    regUserName?: string,
     modifyDate?: string,
     modifyUserId?: number,
+    modifyUserName?: string,
     adverSizeId: number,
+    adverSizeName?: string,
     whole: boolean,
     fileStorageId: number
 };
@@ -19,11 +23,15 @@ export class PageTemplate extends IPage {
     private _id: number;
     private _title: string;
     private _pageSizeId: number;
+    private _pageSizeName: string;
     private _regDate: string;
     private _regUserId: number;
+    private _regUserName: string;
     private _modifyDate?: string;
     private _modifyUserId?: number;
+    private _modifyUserName?: string;
     private _adverSizeId: number;
+    private _adverSizeName: string;
     private _whole: boolean;
     private _fileStorageId: number;
 
@@ -33,11 +41,15 @@ export class PageTemplate extends IPage {
         this._id = parseInt(dbdata.id, 10);
         this._title = dbdata.title;
         this._pageSizeId = parseInt(dbdata.page_size_id, 10);
+        this._pageSizeName = dbdata.page_size_name;
         this._regDate = dbdata.reg_date;
-        this._regUserId = dbdata.reg_user_id;
+        this._regUserId = parseInt(dbdata.reg_user_id, 10);
+        this._regUserName = dbdata.reg_user_name;
         if (dbdata.modify_date) this._modifyDate = dbdata.modify_date;
         if (dbdata.modify_user_id) this._modifyUserId = parseInt(dbdata.modify_user_id, 10);
+        if (dbdata.modify_user_name) this._modifyUserName = dbdata.modify_user_name;
         this._adverSizeId = parseInt(dbdata.adver_size_id, 10);
+        this._adverSizeName = dbdata.adver_size_name;
         this._whole = dbdata.whole ? true : false;
         this._fileStorageId = parseInt(dbdata.file_storage_id, 10);
     }
@@ -45,23 +57,31 @@ export class PageTemplate extends IPage {
     get id() { return this._id; }
     get title() { return this._title; }
     get pageSizeId() { return this._pageSizeId; }
+    get pageSizeName() { return this._pageSizeName; }
     get regDate() { return this._regDate; }
     get regUserId() { return this._regUserId; }
+    get regUserName() { return this._regUserName; }
     get modifyDate() { return this._modifyDate; }
     get modifyUserId() { return this._modifyUserId; }
+    get modifyUserName() { return this._modifyUserName; }
     get adverSizeId() { return this._adverSizeId; }
+    get adverSizeName() { return this._adverSizeName; }
     get whole() { return this._whole; }
     get fileStorageId() { return this._fileStorageId; }
-    get data() {
+    get data(): IPageTemplate {
         return {
             id: this.id,
             title: this.title,
             pageSizeId: this.pageSizeId,
+            pageSizeName: this.pageSizeName,
             regDate: this.regDate,
             regUserId: this.regUserId,
+            regUserName: this.regUserName,
             modifyDate: this.modifyDate,
             modifyUserId: this.modifyUserId,
+            modifyUserName: this.modifyUserName,
             adverSizeId: this.adverSizeId,
+            adverSizeName: this.adverSizeName,
             whole: this.whole,
             fileStorageId: this.fileStorageId
         }
@@ -92,11 +112,17 @@ export class PageTemplate extends IPage {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' id, title, page_size_id, ' +
-                ' TO_CHAR(reg_date, \'YYYYMMDDHH24MMISS\') reg_date, reg_user_id, ' +
-                ' TO_CHAR(modify_date, \'YYYYMMDDHH24MMISS\') modify_date, modify_user_id ' +
-                ' adver_size_id, whole, file_storage_id ' +
-                'FROM t_page_pattern WHERE id=$1 ',
+                ' T.id, T.title, T.page_size_id, ' +
+                ' TO_CHAR(T.reg_date, \'YYYYMMDDHH24MMISS\') reg_date, T.reg_user_id, ' +
+                ' TO_CHAR(T.modify_date, \'YYYYMMDDHH24MMISS\') modify_date, T.modify_user_id ' +
+                ' T.adver_size_id, T.whole, T.file_storage_id, ' +
+                ' P.name page_size_name, U1.name reg_user_name, U2.name modify_user_name, A.name adver_size_name ' +
+                'FROM t_page_template T ' +
+                'LEFT JOIN t_config_page_size_def P ON P.id = T.page_size_id ' +
+                'LEFT JOIN t_account_user U1 ON U1.id = T.reg_user_id ' +
+                'LEFT JOIN t_account_user U2 ON U2.id = T.modify_user_id ' +
+                'LEFT JOIN t_config_adver_size_def A ON A.id = T.adver_size_id ' +
+                'WHERE T.id = $1 ',
                 [id]
             );
             if (res.rowCount < 1) return null;
@@ -113,11 +139,17 @@ export class PageTemplate extends IPage {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' id, title, page_size_id, ' +
-                ' TO_CHAR(reg_date, \'YYYYMMDDHH24MMISS\') reg_date, reg_user_id, ' +
-                ' TO_CHAR(modify_date, \'YYYYMMDDHH24MMISS\') modify_date, modify_user_id ' +
-                ' adver_size_id, whole, file_storage_id ' +
-                'FROM t_page_pattern ORDER BY reg_date DESC ',
+                ' T.id, T.title, T.page_size_id, ' +
+                ' TO_CHAR(T.reg_date, \'YYYYMMDDHH24MMISS\') reg_date, T.reg_user_id, ' +
+                ' TO_CHAR(T.modify_date, \'YYYYMMDDHH24MMISS\') modify_date, T.modify_user_id ' +
+                ' T.adver_size_id, T.whole, T.file_storage_id, ' +
+                ' P.name page_size_name, U1.name reg_user_name, U2.name modify_user_name, A.name adver_size_name ' +
+                'FROM t_page_template T ' +
+                'LEFT JOIN t_config_page_size_def P ON P.id = T.page_size_id ' +
+                'LEFT JOIN t_account_user U1 ON U1.id = T.reg_user_id ' +
+                'LEFT JOIN t_account_user U2 ON U2.id = T.modify_user_id ' +
+                'LEFT JOIN t_config_adver_size_def A ON A.id = T.adver_size_id ' +
+                'ORDER BY T.reg_date DESC ',
             );
             let ret = [];
             for (const row of res.rows) {
@@ -163,7 +195,7 @@ export class PageTemplate extends IPage {
 
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('UPDATE t_page_pattern SET lock=1, lock_date=now(), lock_user_id=$1 WHERE id=$2', [userId, this.id]);
+            const res = await client.query('UPDATE t_page_template SET lock=1, lock_date=now(), lock_user_id=$1 WHERE id=$2', [userId, this.id]);
             return true;
         } catch (e) {
             return false;
@@ -178,7 +210,7 @@ export class PageTemplate extends IPage {
             const res = await client.query('SELECT ' +
                 ' C.lock lock, TO_CHAR(C.lock_date, \'YYYYMMDDHH24MMISS\') lock_date, ' +
                 ' C.lock_user_id lock_user_id, U.name lock_user_name ' +
-                'FROM t_page_pattern C LEFT JOIN t_account_user U ON C.lock_user_id=U.id ' +
+                'FROM t_page_template C LEFT JOIN t_account_user U ON C.lock_user_id=U.id ' +
                 'WHERE C.id=$1 ',
                 [this.id]
             );
@@ -202,9 +234,9 @@ export class PageTemplate extends IPage {
         try {
             let res;
             if (userId) {
-                res = await client.query('UPDATE t_page_pattern SET lock=0, lock_date=$1, lock_user_id=$2 WHERE id=$3 AND lock_user_id=$4', [null, null, this.id, userId]);
+                res = await client.query('UPDATE t_page_template SET lock=0, lock_date=$1, lock_user_id=$2 WHERE id=$3 AND lock_user_id=$4', [null, null, this.id, userId]);
             } else {
-                res = await client.query('UPDATE t_page_pattern SET lock=0, lock_date=$1, lock_user_id=$2 WHERE id=$3 ', [null, null, this.id]);
+                res = await client.query('UPDATE t_page_template SET lock=0, lock_date=$1, lock_user_id=$2 WHERE id=$3 ', [null, null, this.id]);
             }
             return res.rowCount > 0 ? true : false;
         } catch (e) {
@@ -219,9 +251,9 @@ export class PageTemplate extends IPage {
         try {
             let res;
             if (userId) {
-                res = await client.query('SELECT count(*) cnt FROM t_page_pattern WHERE id=$1 AND lock_user_id=$2 AND lock=1', [this.id, userId]);
+                res = await client.query('SELECT count(*) cnt FROM t_page_template WHERE id=$1 AND lock_user_id=$2 AND lock=1', [this.id, userId]);
             } else {
-                res = await client.query('SELECT count(*) cnt FROM t_page_pattern WHERE id=$1 AND lock=1', [this.id]);
+                res = await client.query('SELECT count(*) cnt FROM t_page_template WHERE id=$1 AND lock=1', [this.id]);
             }
             return (res.rowCount > 0) ? true : false;
         } catch (e) {
