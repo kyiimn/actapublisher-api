@@ -1,20 +1,24 @@
 import conn from '../../services/conn';
+import { CodeClassDef } from './codeclass';
 
 export interface IMediaDef {
     id: number,
     name: string,
-    type: string
+    type: string,
+    typeName?: string
 };
 
 export class MediaDef {
     private _id: number;
     private _name: string;
     private _type: string;
+    private _typeName: string;
 
     private constructor(dbdata: any) {
         this._id = parseInt(dbdata.id, 10);
         this._name = dbdata.name;
         this._type = dbdata.type;
+        this._typeName = dbdata.type_name;
     }
 
     static async create(data: IMediaDef): Promise<MediaDef | null> {
@@ -37,7 +41,14 @@ export class MediaDef {
     static async get(id: number): Promise<MediaDef | null> {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('SELECT id, name, type FROM t_config_media_def WHERE id=$1', [id]);
+            const res = await client.query(
+                'SELECT ' +
+                ' M.id, M.name, M.type, C1.name type_name ' +
+                'FROM t_config_media_def M ' +
+                'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code=M.type ' +
+                'WHERE M.id=$2',
+                [CodeClassDef.CLASS_MEDIATYPE, id]
+            );
             if (res.rowCount < 1) return null;
             return new MediaDef(res.rows[0]);
         } catch (e) {
@@ -50,7 +61,14 @@ export class MediaDef {
     static async select() {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('SELECT id, name, type FROM t_config_media_def ORDER BY id');
+            const res = await client.query(
+                'SELECT ' +
+                ' M.id, M.name, M.type, C1.name type_name ' +
+                'FROM t_config_media_def M ' +
+                'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code=M.type ' +
+                'ORDER BY M.id ',
+                [CodeClassDef.CLASS_MEDIATYPE]
+            );
             let ret = [];
             for (const row of res.rows) {
                 ret.push(new MediaDef(row));
@@ -66,7 +84,14 @@ export class MediaDef {
     static async selectByType(type: string): Promise<MediaDef[] | null> {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('SELECT id, name, type FROM t_config_media_def WHERE type=$1 ORDER BY id', [type]);
+            const res = await client.query(
+                'SELECT ' +
+                ' M.id, M.name, M.type, C1.name type_name ' +
+                'FROM t_config_media_def M ' +
+                'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code=M.type ' +
+                'WHERE M.type=$2 ORDER BY M.id ',
+                [CodeClassDef.CLASS_MEDIATYPE, type]
+            );
             let ret = [];
             for (const row of res.rows) {
                 ret.push(new MediaDef(row));
@@ -106,11 +131,13 @@ export class MediaDef {
     get id() { return this._id; }
     get name() { return this._name; }
     get type() { return this._type; }
-    get data() {
+    get typeName() { return this._typeName; }
+    get data(): IMediaDef {
         return {
             id: this.id,
             name: this.name,
-            type: this.type
+            type: this.type,
+            typeName: this.typeName
         };
     }
 

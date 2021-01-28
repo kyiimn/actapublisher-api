@@ -3,7 +3,9 @@ import conn from '../../services/conn';
 export interface IAccountUser {
     id?: number,
     mediaId: number,
+    mediaName?: string,
     deptId: number,
+    deptName?: string,
     loginName: string,
     name: string,
     password?: string,
@@ -19,7 +21,9 @@ export interface IAccountUser {
 export class AccountUser {
     private _id: number;
     private _mediaId: number;
+    private _mediaName: string;
     private _deptId: number;
+    private _deptName: string;
     private _loginName: string;
     private _name: string;
     private _email?: string;
@@ -33,7 +37,9 @@ export class AccountUser {
     private constructor(dbdata: any) {
         this._id = parseInt(dbdata.id, 10);
         this._mediaId = parseInt(dbdata.media_id, 10);
+        this._mediaName = dbdata.media_name;
         this._deptId = parseInt(dbdata.dept_id, 10);
+        this._deptName = dbdata.dept_name;
         this._loginName = dbdata.login_name;
         this._name = dbdata.name;
         this._email = dbdata.email;
@@ -68,7 +74,13 @@ export class AccountUser {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, dept_id, login_name, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE id=$1',
+                'SELECT ' +
+                ' U.id, U.media_id, U.dept_id, U.login_name, U.name, U.email, U.byline, U.use, U.level, U.rule, U.fixed, U.original_data, ' +
+                ' D.name dept_name, M.name media_name ' +
+                'FROM t_account_user U ' +
+                'LEFT JOIN t_config_media_def M ON M.id=U.media_id ' +
+                'LEFT JOIN t_account_dept D ON D.id=U.dept_id ' +
+                'WHERE U.id=$1 ',
                 [id]
             );
             if (res.rowCount < 1) return null;
@@ -84,7 +96,13 @@ export class AccountUser {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, dept_id, login_name, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE login_name=$1',
+                'SELECT ' +
+                ' U.id, U.media_id, U.dept_id, U.login_name, U.name, U.email, U.byline, U.use, U.level, U.rule, U.fixed, U.original_data, ' +
+                ' D.name dept_name, M.name media_name ' +
+                'FROM t_account_user U ' +
+                'LEFT JOIN t_config_media_def M ON M.id=U.media_id ' +
+                'LEFT JOIN t_account_dept D ON D.id=U.dept_id ' +
+                'WHERE U.login_name=$1 ',
                 [loginName]
             );
             if (res.rowCount < 1) return null;
@@ -100,7 +118,13 @@ export class AccountUser {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, dept_id, login_name, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE login_name=$1 AND password=$2',
+                'SELECT ' +
+                ' U.id, U.media_id, U.dept_id, U.login_name, U.name, U.email, U.byline, U.use, U.level, U.rule, U.fixed, U.original_data, ' +
+                ' D.name dept_name, M.name media_name ' +
+                'FROM t_account_user U ' +
+                'LEFT JOIN t_config_media_def M ON M.id=U.media_id ' +
+                'LEFT JOIN t_account_dept D ON D.id=U.dept_id ' +
+                'WHERE U.login_name=$1 AND U.password=$2',
                 [loginId, password]
             );
             if (res.rowCount < 1) return null;
@@ -116,7 +140,13 @@ export class AccountUser {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, dept_id, login_name, name, email, byline, use, level, rule, fixed, original_data FROM t_account_user WHERE media_id=$1 ORDER BY dept_id, login_name ',
+                'SELECT ' +
+                ' U.id, U.media_id, U.dept_id, U.login_name, U.name, U.email, U.byline, U.use, U.level, U.rule, U.fixed, U.original_data, ' +
+                ' D.name dept_name, M.name media_name ' +
+                'FROM t_account_user U ' +
+                'LEFT JOIN t_config_media_def M ON M.id=U.media_id ' +
+                'LEFT JOIN t_account_dept D ON D.id=U.dept_id ' +
+                'WHERE U.media_id=$1 ORDER BY U.dept_id, U.login_name ',
                 [mediaId]
             );
             let ret = [];
@@ -172,7 +202,9 @@ export class AccountUser {
 
     get id() { return this._id; }
     get mediaId() { return this._mediaId; }
+    get mediaName() { return this._mediaName; }
     get deptId() { return this._deptId; }
+    get deptName() { return this._deptName; }
     get loginName() { return this._loginName; }
     get name() { return this._name; }
     get email() { return this._email; }
@@ -182,11 +214,13 @@ export class AccountUser {
     get rule() { return this._rule; }
     get fixed() { return this._fixed; }
     get originalData() { return this._originalData || {}; }
-    get data() {
+    get data(): IAccountUser {
         return {
             id: this.id,
             mediaId: this.mediaId,
+            mediaName: this.mediaName,
             deptId: this.deptId,
+            deptName: this.deptName,
             loginName: this.loginName,
             name: this.name,
             email: this.email,

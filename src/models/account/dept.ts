@@ -3,6 +3,7 @@ import conn from '../../services/conn';
 export interface IAccountDept {
     id: number,
     mediaId: number,
+    mediaName?: string,
     name: string,
     sort: number,
     invalidFlag: boolean,
@@ -13,6 +14,7 @@ export interface IAccountDept {
 export class AccountDept {
     private _id: number;
     private _mediaId: number;
+    private _mediaName: string;
     private _name: string;
     private _sort: number;
     private _invalidFlag: boolean;
@@ -22,6 +24,7 @@ export class AccountDept {
     private constructor(dbdata: any) {
         this._id = parseInt(dbdata.id, 10);
         this._mediaId = parseInt(dbdata.media_id, 10);
+        this._mediaName = dbdata.media_name;
         this._name = dbdata.name;
         this._sort = dbdata.sort;
         this._invalidFlag = dbdata.invalid_flag ? true : false;
@@ -48,7 +51,9 @@ export class AccountDept {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, name, sort, invalid_flag, "group", group_list FROM t_account_dept WHERE id=$1',
+                'SELECT D.id, D.media_id, D.name, D.sort, D.invalid_flag, D."group", D.group_list, M.name media_name FROM t_account_dept D ' +
+                'LEFT JOIN t_config_media_def M ON M.id = D.media_id ' +
+                'WHERE D.id=$1 ',
                 [id]
             );
             if (res.rowCount < 1) return null;
@@ -64,7 +69,9 @@ export class AccountDept {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, name, sort, invalid_flag, "group", group_list FROM t_account_dept WHERE media_id=$1 ORDER BY sort',
+                'SELECT D.id, D.media_id, D.name, D.sort, D.invalid_flag, D."group", D.group_list, M.name media_name FROM t_account_dept D ' +
+                'LEFT JOIN t_config_media_def M ON M.id = D.media_id ' +
+                'WHERE D.media_id=$1 ORDER BY D.sort ',
                 [mediaId]
             );
             let ret = [];
@@ -108,15 +115,17 @@ export class AccountDept {
 
     get id() { return this._id; }
     get mediaId() { return this._mediaId; }
+    get mediaName() { return this._mediaName; }
     get name() { return this._name; }
     get sort() { return this._sort; }
     get invalidFlag() { return this._invalidFlag; }
     get group() { return this._group; }
     get groupMemberList() { return this._groupMemberList || []; }
-    get data() {
+    get data(): IAccountDept {
         return {
             id: this.id,
             mediaId: this.mediaId,
+            mediaName: this.mediaName,
             name: this.name,
             sort: this.sort,
             invalidFlag: this.invalidFlag,

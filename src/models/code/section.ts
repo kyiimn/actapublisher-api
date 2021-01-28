@@ -5,6 +5,7 @@ export interface ISectionDef {
     code: string,
     name: string,
     mediaId: number,
+    mediaName?: string,
     use: boolean
 };
 
@@ -13,6 +14,7 @@ export class SectionDef {
     private _code: string;
     private _name: string;
     private _mediaId: number;
+    private _mediaName: string;
     private _use: boolean;
 
     private constructor(dbdata: any) {
@@ -20,6 +22,7 @@ export class SectionDef {
         this._code = dbdata.code;
         this._name = dbdata.name;
         this._mediaId = parseInt(dbdata.media_id, 10);
+        this._mediaName = dbdata.media_name;
         this._use = dbdata.use ? true : false;
     }
 
@@ -43,7 +46,12 @@ export class SectionDef {
     static async get(id: number): Promise<SectionDef | null> {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('SELECT id, code, name, media_id, use FROM t_config_section_def WHERE id=$1', [id]);
+            const res = await client.query(
+                'SELECT ' +
+                ' S.id, S.code, S.name, S.media_id, S.use, M.name media_name ' +
+                'FROM t_config_section_def S ' +
+                'LEFT JOIN t_config_media_def M ON M.id = S.media_id ' +
+                'WHERE S.id=$1', [id]);
             if (res.rowCount < 1) return null;
             return new SectionDef(res.rows[0]);
         } catch (e) {
@@ -57,7 +65,11 @@ export class SectionDef {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, code, name, media_id, use FROM t_config_section_def WHERE media_id=$1 AND section=$2',
+                'SELECT ' +
+                ' S.id, S.code, S.name, S.media_id, S.use, M.name media_name ' +
+                'FROM t_config_section_def S ' +
+                'LEFT JOIN t_config_media_def M ON M.id = S.media_id ' +
+                'WHERE S.media_id=$1 AND S.section=$2',
                 [mediaId, section]
             );
             if (res.rowCount < 1) return null;
@@ -73,7 +85,11 @@ export class SectionDef {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, code, name, media_id, use FROM t_config_section_def WHERE media_id=$1 ORDER BY media_id, code, id ',
+                'SELECT ' +
+                ' S.id, S.code, S.name, S.media_id, S.use, M.name media_name ' +
+                'FROM t_config_section_def S ' +
+                'LEFT JOIN t_config_media_def M ON M.id = S.media_id ' +
+                'WHERE S.media_id=$1 ORDER BY S.media_id, S.code, S.id ',
                 [mediaId]
             );
             let ret = [];
@@ -119,13 +135,15 @@ export class SectionDef {
     get code() { return this._code; }
     get name() { return this._name; }
     get mediaId() { return this._mediaId; }
+    get mediaName() { return this._mediaName; }
     get use() { return this._use; }
-    get data() {
+    get data(): ISectionDef {
         return {
             id: this.id,
             code: this.code,
             name: this.name,
             mediaId: this.mediaId,
+            mediaName: this.mediaName,
             use: this.use
         };
     }

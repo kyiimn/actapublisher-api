@@ -1,3 +1,4 @@
+import { timeStamp } from 'console';
 import conn from '../../services/conn';
 
 export interface ICodeClassDef {
@@ -6,6 +7,7 @@ export interface ICodeClassDef {
     code: string,
     name: string,
     mediaId?: number,
+    mediaName?: string,
     sort?: number,
     use: boolean
 };
@@ -16,6 +18,7 @@ export class CodeClassDef {
     private _code: string;
     private _name: string;
     private _mediaId?: number;
+    private _mediaName?: string;
     private _sort?: number;
     private _use: boolean;
 
@@ -25,9 +28,29 @@ export class CodeClassDef {
         this._code = dbdata.code;
         this._name = dbdata.name;
         if (dbdata.media_id) this._mediaId = parseInt(dbdata.media_id, 10);
+        if (dbdata.media_name) this._mediaName = dbdata.media_name;
         if (dbdata.sort) this._sort = dbdata.sort;
         this._use = dbdata.use ? true : false;
     }
+
+    static readonly CLASS_MEDIATYPE = 1;
+    static readonly CLASS_SOURCE = 2;
+    static readonly CLASS_COPYRIGHT = 3;
+    static readonly CLASS_ADTYPE = 5;
+    static readonly CLASS_BODYTYPE = 6;
+    static readonly CLASS_ARTICLETYPE = 7;
+    static readonly CLASS_ARTICLESTATUS = 8;
+    static readonly CLASS_IMAGETYPE = 9;
+    static readonly CLASS_PAGETYPE = 10;
+    static readonly CLASS_ARROWTYPE = 11;
+    static readonly CLASS_UNIT = 12;
+    static readonly CLASS_OBJECTTYPE = 13;
+    static readonly CLASS_FRAMETYPE = 14;
+    static readonly CLASS_PAGEEDITSTATUS = 15;
+    static readonly CLASS_PAGEPRINTSTATUS = 16;
+    static readonly CLASS_IMAGESTATUS = 17;
+    static readonly CLASS_PAGEADEDITSTATUS = 18;
+    static readonly CLASS_ADSTATUS = 19;
 
     static async create(data: ICodeClassDef): Promise<CodeClassDef | null> {
         const client = await conn.in.getClient();
@@ -49,7 +72,14 @@ export class CodeClassDef {
     static async get(id: number): Promise<CodeClassDef | null> {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('SELECT id, class, code, name, media_id, sort, use FROM t_config_code_def WHERE id=$1', [id]);
+            const res = await client.query(
+                'SELECT ' +
+                ' C.id, C.class, C.code, C.name, C.media_id, C.sort, C.use, M.name media_name ' +
+                'FROM t_config_code_def C ' +
+                'LEFT JOIN t_config_media_def M ON M.id = C.media_id ' +
+                'WHERE C.id=$1',
+                [id]
+            );
             if (res.rowCount < 1) return null;
             return new CodeClassDef(res.rows[0]);
         } catch (e) {
@@ -63,7 +93,11 @@ export class CodeClassDef {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, class, code, name, media_id, sort, use FROM t_config_code_def WHERE class=$1 AND code=$2',
+                'SELECT ' +
+                ' C.id, C.class, C.code, C.name, C.media_id, C.sort, C.use, M.name media_name ' +
+                'FROM t_config_code_def C ' +
+                'LEFT JOIN t_config_media_def M ON M.id = C.media_id ' +
+                'WHERE C.class=$1 AND C.code=$2',
                 [codeClass, code]
             );
             if (res.rowCount < 1) return null;
@@ -79,7 +113,12 @@ export class CodeClassDef {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, class, code, name, media_id, sort, use FROM t_config_code_def WHERE (media_id=$1 OR media_id IS NULL) ORDER BY class, media_id, sort, code, id ',
+                'SELECT ' +
+                ' C.id, C.class, C.code, C.name, C.media_id, C.sort, C.use, M.name media_name ' +
+                'FROM t_config_code_def C ' +
+                'LEFT JOIN t_config_media_def M ON M.id = C.media_id ' +
+                'WHERE (C.media_id=$1 OR C.media_id IS NULL) ' +
+                'ORDER BY C.class, C.media_id, C.sort, C.code, C.id ',
                 [mediaId]
             );
             let ret = [];
@@ -126,15 +165,17 @@ export class CodeClassDef {
     get code() { return this._code; }
     get name() { return this._name; }
     get mediaId() { return this._mediaId; }
+    get mediaName() { return this._mediaName; }
     get sort() { return this._sort; }
     get use() { return this._use; }
-    get data() {
+    get data(): ICodeClassDef {
         return {
             id: this.id,
             class: this.class,
             code: this.code,
             name: this.name,
             mediaId: this.mediaId,
+            mediaName: this.mediaName,
             sort: this.sort,
             use: this.use
         };

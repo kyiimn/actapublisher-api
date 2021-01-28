@@ -5,6 +5,7 @@ export interface ILocalDef {
     code: string,
     name: string,
     mediaId: number,
+    mediaName?: string,
     sort: number,
     use: boolean
 };
@@ -14,6 +15,7 @@ export class LocalDef {
     private _code: string;
     private _name: string;
     private _mediaId: number;
+    private _mediaName: string;
     private _sort: number;
     private _use: boolean;
 
@@ -22,6 +24,7 @@ export class LocalDef {
         this._code = dbdata.code;
         this._name = dbdata.name;
         this._mediaId = parseInt(dbdata.media_id, 10);
+        this._mediaName = dbdata.mediaName;
         this._sort = dbdata.sort;
         this._use = dbdata.use ? true : false;
     }
@@ -46,7 +49,14 @@ export class LocalDef {
     static async get(id: number): Promise<LocalDef | null> {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('SELECT id, code, name, media_id, sort, use FROM t_config_local_def WHERE id=$1', [id]);
+            const res = await client.query(
+                'SELECT ' +
+                ' L.id, L.code, L.name, L.media_id, L.sort, L.use, M.name media_name ' +
+                'FROM t_config_local_def L ' +
+                'LEFT JOIN t_config_media_def M ON M.id = L.media_id ' +
+                'WHERE L.id=$1',
+                [id]
+            );
             if (res.rowCount < 1) return null;
             return new LocalDef(res.rows[0]);
         } catch (e) {
@@ -60,7 +70,11 @@ export class LocalDef {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, code, name, media_id, sort, use FROM t_config_local_def WHERE media_id=$1 AND code=$2',
+                'SELECT ' +
+                ' L.id, L.code, L.name, L.media_id, L.sort, L.use, M.name media_name ' +
+                'FROM t_config_local_def L ' +
+                'LEFT JOIN t_config_media_def M ON M.id = L.media_id ' +
+                'WHERE L.media_id=$1 AND L.code=$2',
                 [mediaId, code]
             );
             if (res.rowCount < 1) return null;
@@ -76,7 +90,12 @@ export class LocalDef {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, code, name, media_id, sort, use FROM t_config_local_def WHERE media_id=$1 ORDER BY media_id, sort, code, id ',
+                'SELECT ' +
+                ' L.id, L.code, L.name, L.media_id, L.sort, L.use, M.name media_name ' +
+                'FROM t_config_local_def L ' +
+                'LEFT JOIN t_config_media_def M ON M.id = L.media_id ' +
+                'WHERE L.media_id=$1 ' + 
+                'ORDER BY L.media_id, L.sort, L.code, L.id ',
                 [mediaId]
             );
             let ret = [];
@@ -122,14 +141,16 @@ export class LocalDef {
     get code() { return this._code; }
     get name() { return this._name; }
     get mediaId() { return this._mediaId; }
+    get mediaName() { return this._mediaName; }
     get sort() { return this._sort; }
     get use() { return this._use; }
-    get data() {
+    get data(): ILocalDef {
         return {
             id: this.id,
             code: this.code,
             name: this.name,
             mediaId: this.mediaId,
+            mediaName: this.mediaName,
             sort: this.sort,
             use: this.use
         };

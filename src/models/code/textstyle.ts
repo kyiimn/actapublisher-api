@@ -4,9 +4,11 @@ import conn from '../../services/conn';
 export interface ITextStyleDef {
     id: number,
     mediaId: number,
+    mediaName?: string,
     name: string,
     sort: number,
     fontId: number,
+    fontName?: string,
     fontSize: number,
     color: string,
     xscale: number,
@@ -21,9 +23,11 @@ export interface ITextStyleDef {
 export class TextStyleDef {
     private _id: number;
     private _mediaId: number;
+    private _mediaName: string;
     private _name: string;
     private _sort: number;
     private _fontId: number;
+    private _fontName: string;
     private _fontSize: number;
     private _color: string;
     private _xscale: number;
@@ -37,9 +41,11 @@ export class TextStyleDef {
     private constructor(dbdata: any) {
         this._id = parseInt(dbdata.id, 10);
         this._mediaId = parseInt(dbdata.media_id, 10);
+        this._mediaName = dbdata.media_name;
         this._name = dbdata.name;
         this._sort = dbdata.sort;
         this._fontId = parseInt(dbdata.font_id, 10);
+        this._fontName = dbdata.font_name;
         this._fontSize = dbdata.font_size;
         this._color = dbdata.color;
         this._xscale = dbdata.xscale;
@@ -81,10 +87,14 @@ export class TextStyleDef {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' media_id, name, sort, ' +
-                ' font_id, font_size, color, xscale, letter_spacing, line_height, ' +
-                ' text_align, underline, strikeline, indent' +
-                'FROM t_config_textstyle_def WHERE id=$1',
+                ' T.media_id, T.name, T.sort, ' +
+                ' T.font_id, T.font_size, T.color, T.xscale, T.letter_spacing, T.line_height, ' +
+                ' T.text_align, T.underline, T.strikeline, T.indent' +
+                ' M.name media_name, F.name font_name ' +
+                'FROM t_config_textstyle_def T ' +
+                'LEFT JOIN t_config_media_def M ON M.id = T.media_id ' +
+                'LEFT JOIN t_config_font_def F ON F.id = T.font_id ' +
+                'WHERE T.id=$1',
                 [id]
             );
             if (res.rowCount < 1) return null;
@@ -101,10 +111,15 @@ export class TextStyleDef {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' media_id, name, sort, ' +
-                ' font_id, font_size, color, xscale, letter_spacing, line_height, ' +
-                ' text_align, underline, strikeline, indent' +
-                'FROM t_config_textstyle_def WHERE media_id=? ORDER BY media_id, sort, id ',
+                ' T.media_id, T.name, T.sort, ' +
+                ' T.font_id, T.font_size, T.color, T.xscale, T.letter_spacing, T.line_height, ' +
+                ' T.text_align, T.underline, T.strikeline, T.indent' +
+                ' M.name media_name, F.name font_name ' +
+                'FROM t_config_textstyle_def T ' +
+                'LEFT JOIN t_config_media_def M ON M.id = T.media_id ' +
+                'LEFT JOIN t_config_font_def F ON F.id = T.font_id ' +
+                'WHERE T.media_id=? ' +
+                'ORDER BY T.media_id, T.sort, T.id ',
                 [mediaId]
             );
             let ret = [];
@@ -157,9 +172,11 @@ export class TextStyleDef {
 
     get id() { return this._id; }
     get mediaId() { return this._mediaId; }
+    get mediaName() { return this._mediaName; }
     get name() { return this._name; }
     get sort() { return this._sort; }
     get fontId() { return this._fontId; }
+    get fontName() { return this._fontName; }
     get fontSize() { return this._fontSize; }
     get color() { return this._color; }
     get xscale() { return this._xscale; }
@@ -169,13 +186,15 @@ export class TextStyleDef {
     get underline() { return this._underline; }
     get strikeline() { return this._strikeline; }
     get indent() { return this._indent; }
-    get data() {
+    get data(): ITextStyleDef {
         return {
             id: this.id,
             mediaId: this.mediaId,
+            mediaName: this.mediaName,
             name: this.name,
             sort: this.sort,
             fontId: this.fontId,
+            fontName: this.fontName,
             fontSize: this.fontSize,
             color: this.color,
             xscale: this.xscale,

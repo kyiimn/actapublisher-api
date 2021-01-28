@@ -3,6 +3,7 @@ import conn from '../../services/conn';
 export interface IFontDef {
     id?: number,
     mediaId: number,
+    mediaName?: string,
     name: string,
     fileStorageId: number,
     fileExtension: string,
@@ -13,6 +14,7 @@ export interface IFontDef {
 export class FontDef {
     private _id: number;
     private _mediaId: number;
+    private _mediaName: string;
     private _name: string;
     private _fileStorageId: number;
     private _fileExtension: string;
@@ -22,6 +24,7 @@ export class FontDef {
     private constructor(dbdata: any) {
         this._id = parseInt(dbdata.id, 10);
         this._mediaId = parseInt(dbdata.media_id, 10);
+        this._mediaName = dbdata.media_name;
         this._name = dbdata.name;
         this._fileStorageId = parseInt(dbdata.file_storage_id, 10);
         this._fileExtension = dbdata.file_extension;
@@ -49,7 +52,14 @@ export class FontDef {
     static async get(id: number): Promise<FontDef | null> {
         const client = await conn.in.getClient();
         try {
-            const res = await client.query('SELECT id, media_id, name, file_storage_id, file_extension, file_size, sort FROM t_config_font_def WHERE id=$1', [id]);
+            const res = await client.query(
+                'SELECT ' +
+                ' F.id, F.media_id, F.name, F.file_storage_id, F.file_extension, F.file_size, F.sort, M.name media_name ' +
+                'FROM t_config_font_def F ' +
+                'LEFT JOIN t_config_media_def M ON M.id = F.media_id ' +
+                'WHERE F.id=$1',
+                [id]
+            );
             if (res.rowCount < 1) return null;
             return new FontDef(res.rows[0]);
         } catch (e) {
@@ -63,7 +73,12 @@ export class FontDef {
         const client = await conn.in.getClient();
         try {
             const res = await client.query(
-                'SELECT id, media_id, name, file_storage_id, file_extension, file_size, sort FROM t_config_font_def ORDER BY media_id, sort, id',
+                'SELECT ' +
+                ' F.id, F.media_id, F.name, F.file_storage_id, F.file_extension, F.file_size, F.sort, M.name media_name ' +
+                'FROM t_config_font_def F ' +
+                'LEFT JOIN t_config_media_def M ON M.id = F.media_id ' +
+                'WHERE F.media_id=$1 ' +
+                'ORDER BY F.media_id, F.sort, F.id',
                 [mediaId]
             );
             let ret = [];
@@ -107,15 +122,17 @@ export class FontDef {
 
     get id() { return this._id; }
     get mediaId() { return this._mediaId; }
+    get mediaName() { return this._mediaName; }
     get name() { return this._name; }
     get fileStorageId() { return this._fileStorageId; }
     get fileExtension() { return this._fileExtension; }
     get fileSize() { return this._fileSize; }
     get sort() { return this._sort; }
-    get data() {
+    get data(): IFontDef {
         return {
             id: this.id,
             mediaId: this.mediaId,
+            mediaName: this.mediaName,
             name: this.name,
             fileStorageId: this.fileStorageId,
             fileExtension: this.fileExtension,
