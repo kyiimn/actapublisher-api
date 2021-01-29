@@ -163,7 +163,8 @@ export class PageSizeDef {
                 'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code = P.paper_type ' +
                 'LEFT JOIN t_config_code_def C2 ON C2.class=$2 AND C2.code = P.paper_direction ' +
                 'LEFT JOIN t_config_code_def C3 ON C3.class=$3 AND C3.code = P.linespacing_unit ' +
-                'ORDER BY P.id '
+                'ORDER BY P.id ',
+                [CodeClassDef.CLASS_PAPERTYPE, CodeClassDef.CLASS_PAPERDIRECTION, CodeClassDef.CLASS_UNIT]
             );
             let ret = [];
             for (const row of res.rows) {
