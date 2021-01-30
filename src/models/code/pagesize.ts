@@ -63,28 +63,28 @@ export class PageSizeDef {
         this._name = dbdata.name;
         this._paperType = dbdata.paper_type;
         this._paperTypeName = dbdata.paper_type_name;
-        this._paperWidth = dbdata.paper_width;
-        this._paperHeight = dbdata.paper_height;
+        this._paperWidth = parseFloat(dbdata.paper_width);
+        this._paperHeight = parseFloat(dbdata.paper_height);
         this._paperDirection = dbdata.paper_direction;
         this._paperDirectionName = dbdata.paper_direction_name;
-        this._linespacingSize = dbdata.linespacing_size;
+        this._linespacingSize = parseFloat(dbdata.linespacing_size);
         this._linespacingUnit = dbdata.linespacing_unit;
         this._linespacingUnitName = dbdata.linespacing_unit_name;
-        this._linespacingRatio = dbdata.linespacing_ratio;
-        this._columnMarginInside = dbdata.col_margin_inside;
-        this._columnMarginOutside = dbdata.col_margin_outside;
+        this._linespacingRatio = parseFloat(dbdata.linespacing_ratio);
+        this._columnMarginInside = parseFloat(dbdata.col_margin_inside);
+        this._columnMarginOutside = parseFloat(dbdata.col_margin_outside);
         this._columnCount = dbdata.col_count;
-        this._columnSize = dbdata.col_size;
-        this._columnSpacing = dbdata.col_spacing;
-        this._columnOther = dbdata.col_other;
-        this._columnTotalSize = dbdata.col_total_size;
-        this._lineMarginTop = dbdata.line_margin_top;
-        this._lineMarginBottom = dbdata.line_margin_bottom;
-        this._lineHeight = dbdata.line_height;
+        this._columnSize = parseFloat(dbdata.col_size);
+        this._columnSpacing = parseFloat(dbdata.col_spacing);
+        this._columnOther = parseFloat(dbdata.col_other);
+        this._columnTotalSize = parseFloat(dbdata.col_total_size);
+        this._lineMarginTop = parseFloat(dbdata.line_margin_top);
+        this._lineMarginBottom = parseFloat(dbdata.line_margin_bottom);
+        this._lineHeight = parseFloat(dbdata.line_height);
         this._lineCount = dbdata.line_count;
-        this._lineSpacing = dbdata.line_spacing;
-        this._lineOther = dbdata.line_other;
-        this._lineTotalSize = dbdata.line_total_size;
+        this._lineSpacing = parseFloat(dbdata.line_spacing);
+        this._lineOther = parseFloat(dbdata.line_other);
+        this._lineTotalSize = parseFloat(dbdata.line_total_size);
     }
 
     static async create(data: IPageSizeDef): Promise<PageSizeDef | null> {

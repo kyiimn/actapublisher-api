@@ -46,15 +46,15 @@ export class TextStyleDef {
         this._sort = dbdata.sort;
         this._fontId = parseInt(dbdata.font_id, 10);
         this._fontName = dbdata.font_name;
-        this._fontSize = dbdata.font_size;
+        this._fontSize = parseFloat(dbdata.font_size);
         this._color = dbdata.color;
-        this._xscale = dbdata.xscale;
-        this._letterSpacing = dbdata.letter_spacing;
-        this._lineHeight = dbdata.line_height;
+        this._xscale = parseFloat(dbdata.xscale);
+        this._letterSpacing = parseFloat(dbdata.letter_spacing);
+        this._lineHeight = parseFloat(dbdata.line_height);
         this._textAlign = dbdata.text_align;
         this._underline = dbdata.underline ? true : false;
         this._strikeline = dbdata.strikeline ? true : false;
-        this._indent = dbdata.indent;
+        this._indent = parseFloat(dbdata.indent);
     }
 
     static async create(data: ITextStyleDef): Promise<TextStyleDef | null> {

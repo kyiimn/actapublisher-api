@@ -41,10 +41,10 @@ export class PageObject {
         this._frameId = dbdata.frame_id;
         this._frameType = dbdata.frame_type;
         this._frameTypeName = dbdata.frame_type_name;
-        this._posX = dbdata.pos_x;
-        this._posY = dbdata.pos_y;
-        this._width = dbdata.width;
-        this._height = dbdata.height;
+        this._posX = parseFloat(dbdata.pos_x);
+        this._posY = parseFloat(dbdata.pos_y);
+        this._width = parseFloat(dbdata.width);
+        this._height = parseFloat(dbdata.height);
         this._option = dbdata.option;
     }
 

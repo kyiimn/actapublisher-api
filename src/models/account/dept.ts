@@ -29,7 +29,7 @@ export class AccountDept {
         this._sort = dbdata.sort;
         this._invalidFlag = dbdata.invalid_flag ? true : false;
         this._group = dbdata.group ? true : false;
-        this._groupMemberList = dbdata.groupMemberList || [];
+        this._groupMemberList = dbdata.group_list || [];
     }
 
     static async create(data: IAccountDept): Promise<AccountDept | null> {
