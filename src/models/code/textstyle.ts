@@ -2,7 +2,7 @@ import { StringMappingType } from 'typescript';
 import conn from '../../services/conn';
 
 export interface ITextStyleDef {
-    id: number,
+    id?: number,
     mediaId: number,
     mediaName?: string,
     name: string,
