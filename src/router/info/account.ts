@@ -3,8 +3,8 @@ import infoAccountService from '../../services/info/account';
 
 import { Request, Response } from '../../services/session';
 
-export default (app: express.Application) => {
-    app.use('/v1/info/account/*', function (req: Request, res, next) {
+export default async (app: express.Application) => {
+    app.use('/v1/info/account', function (req: Request, res, next) {
         if (!req.session?.logined) {
             res.status(403).json({ status: 403, message: '접근 권한이 없습니다.' });
         } else {

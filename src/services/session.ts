@@ -1,5 +1,6 @@
 import express from 'express';
 import redis from 'redis';
+import { v4 as uuidv4, version as uuidVersion, validate as uuidValidate } from 'uuid';
 
 export type LoginInfo = {
     logined?: boolean,
@@ -69,12 +70,23 @@ class ActaSessionManager {
         });
     }
 
+    private _uuidValidate(uuid: string) {
+        if (uuidValidate(uuid) && uuidVersion(uuid) === 4) return true;
+        return false;
+    }
+
     async session(req: Request, res: Response, next: express.NextFunction) {
-        const clientId = req.header('ActaApi-ClientID');
-        const sessionId = req.header('ActaApi-SessionID');
         const self = this;
 
-        if (!clientId || !sessionId) {
+        let clientId = req.cookies.ActaAPIClientID;
+        let sessionId = req.cookies.ActaAPISessionID;
+        if (!clientId) clientId = uuidv4();
+        if (!sessionId) sessionId = uuidv4();
+
+        res.cookie('ActaAPIClientID', clientId, { maxAge: 365 * 24 * 60 * 60 * 1000 });
+        res.cookie('ActaAPISessionID', sessionId);
+
+        if (!this._uuidValidate(clientId) || !this._uuidValidate(sessionId)) {
             res.status(406).json({ status: 406, message: '허용되지 않은 접근입니다.' });
             return;
         }
