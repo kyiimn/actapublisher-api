@@ -89,3 +89,5 @@ INSERT INTO t_account_user (media_id, dept_id, login_name, name, password, use, 
 
 INSERT INTO t_config_font (media_id, name, file_storage_id, file_extension, file_size, sort) VALUES (1, '명조', 5, 'ttf', 0, 1);
 INSERT INTO t_config_font (media_id, name, file_storage_id, file_extension, file_size, sort) VALUES (1, '고딕', 5, 'ttf', 0, 2);
+
+INSERT INTO t_config_textstyle_def (media_id, name, sort, font_id, font_size, color, xscale, letter_spacing, line_height, text_align, underline, strikeline, indent) VALUES (1, '본문', 1, 1, 3.88056, '#000000000fff', 1, 0, 1, 0, 0, 0, 0);

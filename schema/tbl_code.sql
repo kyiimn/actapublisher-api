@@ -144,7 +144,8 @@ CREATE TABLE t_config_font_def (
     file_extension character varying (4) NOT NULL,
     file_size integer NOT NULL,
     sort integer NOT NULL,
-    CONSTRAINT pk_config_font_def_id PRIMARY KEY (id)
+    CONSTRAINT pk_config_font_def_id PRIMARY KEY (id),
+    CONSTRAINT unique_config_font_def UNIQUE (media_id, name)
 ) WITH (OIDS = FALSE);
 
 -- DROP TABLE t_config_textstyle_def;
@@ -163,5 +164,6 @@ CREATE TABLE t_config_textstyle_def (
     underline integer NOT NULL,
     strikeline integer NOT NULL,
     indent numeric NOT NULL,
-    CONSTRAINT pk_config_textstyle_def_id PRIMARY KEY (id)  
+    CONSTRAINT pk_config_textstyle_def_id PRIMARY KEY (id),
+    CONSTRAINT unique_config_textstyle_def UNIQUE (media_id, name)
 ) WITH (OIDS = FALSE);

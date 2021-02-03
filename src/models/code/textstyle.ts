@@ -64,7 +64,7 @@ export class TextStyleDef {
                 'INSERT t_config_textstyle_def (' +
                 ' media_id, name, sort, ' +
                 ' font_id, font_size, color, xscale, letter_spacing, line_height, ' +
-                ' text_align, underline, strikeline, indent' +
+                ' text_align, underline, strikeline, indent ' +
                 ') VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id',
                 [
                     data.mediaId, data.name, data.sort,
@@ -87,9 +87,9 @@ export class TextStyleDef {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' T.media_id, T.name, T.sort, ' +
+                ' T.id, T.media_id, T.name, T.sort, ' +
                 ' T.font_id, T.font_size, T.color, T.xscale, T.letter_spacing, T.line_height, ' +
-                ' T.text_align, T.underline, T.strikeline, T.indent' +
+                ' T.text_align, T.underline, T.strikeline, T.indent, ' +
                 ' M.name media_name, F.name font_name ' +
                 'FROM t_config_textstyle_def T ' +
                 'LEFT JOIN t_config_media_def M ON M.id = T.media_id ' +
@@ -111,14 +111,14 @@ export class TextStyleDef {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' T.media_id, T.name, T.sort, ' +
+                ' T.id, T.media_id, T.name, T.sort, ' +
                 ' T.font_id, T.font_size, T.color, T.xscale, T.letter_spacing, T.line_height, ' +
-                ' T.text_align, T.underline, T.strikeline, T.indent' +
+                ' T.text_align, T.underline, T.strikeline, T.indent, ' +
                 ' M.name media_name, F.name font_name ' +
                 'FROM t_config_textstyle_def T ' +
                 'LEFT JOIN t_config_media_def M ON M.id = T.media_id ' +
                 'LEFT JOIN t_config_font_def F ON F.id = T.font_id ' +
-                'WHERE T.media_id=? ' +
+                'WHERE T.media_id=$1  ' +
                 'ORDER BY T.media_id, T.sort, T.id ',
                 [mediaId]
             );
@@ -141,7 +141,7 @@ export class TextStyleDef {
                 'UPDATE t_config_textstyle_def SET ' +
                 ' name=$1, sort=$2, ' +
                 ' font_id=$3, font_size=$4, color=$5, xscale=$6, letter_spacing=$7, line_height=$8, ' +
-                ' text_align=$9, underline=$10, strikeline=$11, indent=$12' +
+                ' text_align=$9, underline=$10, strikeline=$11, indent=$12 ' +
                 'WHERE id=$13',
                 [
                     this.name, this.sort,
