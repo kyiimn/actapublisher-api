@@ -33,7 +33,7 @@ export class ClosingTimeDef {
     }
 
     static async create(data: IClosingTimeDef): Promise<ClosingTimeDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_closing_time_def (closing_date, closing_time, media_id, page, edition_id) VALUES ($1, $2, $3, $4, $5) RETURNING id',
@@ -50,7 +50,7 @@ export class ClosingTimeDef {
     }
 
     static async get(id: number): Promise<ClosingTimeDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -72,7 +72,7 @@ export class ClosingTimeDef {
     }
 
     static async selectByMediaId(mediaId: number): Promise<ClosingTimeDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -97,7 +97,7 @@ export class ClosingTimeDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_closing_time_def SET closing_date=$1, closing_time=$2, page=$3, edition_id=$4 WHERE id=$5',
@@ -112,7 +112,7 @@ export class ClosingTimeDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_closing_time_def WHERE id=$1', [this.id]);
             return true;

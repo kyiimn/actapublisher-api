@@ -119,7 +119,7 @@ export class ImageContent extends IContent {
     }
 
     static async create(data: IImageContent): Promise<ImageContent | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const newId = await this.generateId();
             if (!newId) return null;
@@ -159,7 +159,7 @@ export class ImageContent extends IContent {
     }
 
     static async get(id: string): Promise<ImageContent | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -195,7 +195,7 @@ export class ImageContent extends IContent {
     }
 
     static async select(): Promise<ImageContent[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -234,7 +234,7 @@ export class ImageContent extends IContent {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_image SET ver=ver+1, ' +
@@ -263,7 +263,7 @@ export class ImageContent extends IContent {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_image WHERE id=$1', [this.id]);
             return true;
@@ -277,7 +277,7 @@ export class ImageContent extends IContent {
     async setLock(userId: number): Promise<boolean> {
         if (await this.isLock()) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('UPDATE t_image SET lock=1, lock_date=now(), lock_user_id=$1 WHERE id=$2', [userId, this.id]);
             return true;
@@ -289,7 +289,7 @@ export class ImageContent extends IContent {
     }
 
     async getLock(): Promise<ILockInfo | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT ' +
                 ' C.lock lock, TO_CHAR(C.lock_date, \'YYYYMMDDHH24MMISS\') lock_date, ' +
@@ -314,7 +314,7 @@ export class ImageContent extends IContent {
     async releaseLock(userId?: number): Promise<boolean> {
         if (await this.isLock(userId)) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {
@@ -331,7 +331,7 @@ export class ImageContent extends IContent {
     }
 
     async isLock(userId?: number): Promise<boolean> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {

@@ -146,7 +146,7 @@ export class PageAdver extends IPage {
     set status(status) { this._status = status; }
 
     static async create(data: IPageAdver): Promise<PageAdver | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const newId = await this.generateId();
             if (!newId) return null;
@@ -170,7 +170,7 @@ export class PageAdver extends IPage {
     }
 
     static async get(id: string): Promise<PageAdver | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -202,7 +202,7 @@ export class PageAdver extends IPage {
     }
 
     static async selectByPubInfo(publishId: number): Promise<PageAdver[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -237,7 +237,7 @@ export class PageAdver extends IPage {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_page_adver SET adver_size_id=$1, status=$2 WHERE id=$3 AND lock=1 ',
@@ -254,7 +254,7 @@ export class PageAdver extends IPage {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_page_adver WHERE id=$1', [this.id]);
             return true;
@@ -268,7 +268,7 @@ export class PageAdver extends IPage {
     async setLock(userId: number): Promise<boolean> {
         if (await this.isLock()) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('UPDATE t_page_adver SET lock=1, lock_date=now(), lock_user_id=$1 WHERE id=$2', [userId, this.id]);
             return true;
@@ -280,7 +280,7 @@ export class PageAdver extends IPage {
     }
 
     async getLock(): Promise<ILockInfo | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT ' +
                 ' C.lock lock, TO_CHAR(C.lock_date, \'YYYYMMDDHH24MMISS\') lock_date, ' +
@@ -305,7 +305,7 @@ export class PageAdver extends IPage {
     async releaseLock(userId?: number): Promise<boolean> {
         if (await this.isLock(userId)) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {
@@ -322,7 +322,7 @@ export class PageAdver extends IPage {
     }
 
     async isLock(userId?: number): Promise<boolean> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {

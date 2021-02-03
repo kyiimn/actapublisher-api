@@ -15,7 +15,7 @@ export class PageTitle {
     }
 
     static async create(data: IPageTitle): Promise<PageTitle | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_page_title (name) VALUES ($1, $2) RETURNING id',
@@ -32,7 +32,7 @@ export class PageTitle {
     }
 
     static async get(id: number): Promise<PageTitle | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT id, name FROM t_page_title WHERE id=$1', [id]);
             if (res.rowCount < 1) return null;
@@ -45,7 +45,7 @@ export class PageTitle {
     }
 
     static async select(): Promise<PageTitle[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT id, name FROM t_page_title ORDER BY id ');
             let ret = [];
@@ -61,7 +61,7 @@ export class PageTitle {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_page_title SET name=$1 WHERE id=$2',
@@ -76,7 +76,7 @@ export class PageTitle {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_page_title WHERE id=$1', [this.id]);
             return true;

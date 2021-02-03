@@ -30,7 +30,7 @@ export class LocalDef {
     }
 
     static async create(data: ILocalDef): Promise<LocalDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_local_def (code, name, media_id, sort, use) VALUES ($1, $2, $3, $4, $5) RETURNING id',
@@ -47,7 +47,7 @@ export class LocalDef {
     }
 
     static async get(id: number): Promise<LocalDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -67,7 +67,7 @@ export class LocalDef {
     }
 
     static async getByCode(mediaId: number, code: string): Promise<LocalDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -87,7 +87,7 @@ export class LocalDef {
     }
 
     static async selectByMediaId(mediaId: number): Promise<LocalDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -111,7 +111,7 @@ export class LocalDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_local_def SET code=$1, name=$2, sort=$3, use=$4 WHERE id=$5',
@@ -126,7 +126,7 @@ export class LocalDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_local_def WHERE id=$1', [this.id]);
             return true;

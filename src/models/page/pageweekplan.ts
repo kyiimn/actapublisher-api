@@ -106,7 +106,7 @@ export class PageWeekPlan {
     set whole(whole) { this._whole = whole; }
 
     static async create(data: IPageWeekPlan): Promise<PageWeekPlan | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT INTO t_page_week_plan (' +
@@ -127,7 +127,7 @@ export class PageWeekPlan {
     }
 
     static async get(id: number): Promise<PageWeekPlan | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -153,7 +153,7 @@ export class PageWeekPlan {
     }
 
     static async selectByWeek(mediaId: number, week: number): Promise<PageWeekPlan[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -182,7 +182,7 @@ export class PageWeekPlan {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_page_week_plan SET ' +
@@ -200,7 +200,7 @@ export class PageWeekPlan {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_page_week_plan WHERE id=$1', [this.id]);
             return true;

@@ -27,7 +27,7 @@ export class SectionDef {
     }
 
     static async create(data: ISectionDef): Promise<SectionDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_section_def (code, name, media_id, use) VALUES ($1, $2, $3, $4) RETURNING id',
@@ -44,7 +44,7 @@ export class SectionDef {
     }
 
     static async get(id: number): Promise<SectionDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -62,7 +62,7 @@ export class SectionDef {
     }
 
     static async getByCode(mediaId: number, section: string): Promise<SectionDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -82,7 +82,7 @@ export class SectionDef {
     }
 
     static async selectByMediaId(mediaId: number): Promise<SectionDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -105,7 +105,7 @@ export class SectionDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_section_def SET code=$1, name=$2, use=$3 WHERE id=$4',
@@ -120,7 +120,7 @@ export class SectionDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_section_def WHERE id=$1', [this.id]);
             return true;

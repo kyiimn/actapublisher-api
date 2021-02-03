@@ -2,17 +2,14 @@ import express from 'express';
 import { IStorageDef, StorageDef } from '../../models/code/storage';
 import { Request, Response } from '../../services/session';
 
-import path from 'path';
+import fs from 'fs';
 
 export default async (app: express.Application) => {
     const storageDefs: IStorageDef[] | null = await StorageDef.select();
     if (!storageDefs) return;
 
-    let filedataRoot = process.env.FILEDATA_ROOT;
-    if (!filedataRoot) filedataRoot = `${__dirname}/data`;
-
     for (const storageDef of storageDefs) {
-        const root = path.join(filedataRoot, storageDef.basePath);
+        if (!fs.existsSync(storageDef.basePath)) fs.mkdirSync(storageDef.basePath);
         const route = `/data/${storageDef.id}`;
         if (storageDef.name !== 'FONT') {
             app.use(route, async (req: Request, res: Response, next) => {
@@ -23,6 +20,6 @@ export default async (app: express.Application) => {
                 next();
             });
         }
-        app.use(route, express.static(root));
+        app.use(route, express.static(storageDef.basePath));
     }
 };

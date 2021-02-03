@@ -52,7 +52,7 @@ export class AccountUser {
     }
 
     static async create(data: IAccountUser): Promise<AccountUser | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_account_user (media_id, dept_id, login_name, name, password, email, byline, use, level, rule, fixed, original_data) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id ',
@@ -71,7 +71,7 @@ export class AccountUser {
     }
 
     static async get(id: number): Promise<AccountUser | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -93,7 +93,7 @@ export class AccountUser {
     }
 
     static async getByLoginName(loginName: string): Promise<AccountUser | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -115,7 +115,7 @@ export class AccountUser {
     }
 
     static async getByLoginIdWithPassword(loginId: string, password: string): Promise<AccountUser | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -137,7 +137,7 @@ export class AccountUser {
     }
 
     static async selectByMediaId(mediaId: number): Promise<AccountUser[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -162,7 +162,7 @@ export class AccountUser {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_account_user SET media_id=$1, dept_id=$2, name=$3, email=$4, byline=$5, use=$6, level=$7, rule=$8, fixed=$9, original_data=$10 WHERE id=$11',
@@ -177,7 +177,7 @@ export class AccountUser {
     }
 
     async changePassword(password: string) {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('UPDATE t_account_user SET password=$1 WHERE id=$2', [password, this.id]);
             return true;
@@ -189,7 +189,7 @@ export class AccountUser {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_account_user WHERE id=$1', [this.id]);
             return true;

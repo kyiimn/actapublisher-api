@@ -88,7 +88,7 @@ export class PageObject {
     set option(option) { this._option = option; }
 
     static async create(data: IPageObject): Promise<PageObject | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT INTO t_page_object (' +
@@ -109,7 +109,7 @@ export class PageObject {
     }
 
     static async get(id: number): Promise<PageObject | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -131,7 +131,7 @@ export class PageObject {
     }
 
     static async selectByPageId(pageId: string): Promise<PageObject[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -156,7 +156,7 @@ export class PageObject {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_page_object SET ' +
@@ -174,7 +174,7 @@ export class PageObject {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_page_object WHERE id=$1', [this.id]);
             return true;

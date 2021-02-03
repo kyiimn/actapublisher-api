@@ -3,7 +3,7 @@ import conn from '../../services/conn';
 
 export default abstract class IPage {
     protected static async generateId(): Promise<string | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT generate_id() id');
             if (res.rowCount < 1) return null;

@@ -84,7 +84,7 @@ export class PagePublishInfo {
     set whole(whole) { this._whole = whole; }
 
     static async create(data: IPagePublishInfo): Promise<PagePublishInfo | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT INTO t_page_publish_info (' +
@@ -105,7 +105,7 @@ export class PagePublishInfo {
     }
 
     static async get(id: number): Promise<PagePublishInfo | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -129,7 +129,7 @@ export class PagePublishInfo {
     }
 
     static async selectByPubInfo(mediaId: number, pubDate: string): Promise<PagePublishInfo[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -156,7 +156,7 @@ export class PagePublishInfo {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_page_publish_info SET ' +
@@ -174,7 +174,7 @@ export class PagePublishInfo {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_page_publish_info WHERE id=$1', [this.id]);
             return true;

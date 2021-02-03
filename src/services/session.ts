@@ -125,4 +125,4 @@ class ActaSessionManager {
     }
 }
 
-export default ActaSessionManager;
+export default ActaSessionManager.in;

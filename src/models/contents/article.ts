@@ -107,7 +107,7 @@ export class ArticleContent extends IContent {
     }
 
     static async create(data: IArticleContent): Promise<ArticleContent | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const newId = await this.generateId();
             if (!newId) return null;
@@ -144,7 +144,7 @@ export class ArticleContent extends IContent {
     }
 
     static async get(id: string): Promise<ArticleContent | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -181,7 +181,7 @@ export class ArticleContent extends IContent {
     }
 
     static async select(): Promise<ArticleContent[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -221,7 +221,7 @@ export class ArticleContent extends IContent {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_article SET ver=ver+1, ' +
@@ -250,7 +250,7 @@ export class ArticleContent extends IContent {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_article WHERE id=$1', [this.id]);
             return true;
@@ -264,7 +264,7 @@ export class ArticleContent extends IContent {
     async setLock(userId: number): Promise<boolean> {
         if (await this.isLock()) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('UPDATE t_article SET lock=1, lock_date=now(), lock_user_id=$1 WHERE id=$2', [userId, this.id]);
             return true;
@@ -276,7 +276,7 @@ export class ArticleContent extends IContent {
     }
 
     async getLock(): Promise<ILockInfo | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT ' +
                 ' C.lock lock, TO_CHAR(C.lock_date, \'YYYYMMDDHH24MMISS\') lock_date, ' +
@@ -301,7 +301,7 @@ export class ArticleContent extends IContent {
     async releaseLock(userId?: number): Promise<boolean> {
         if (await this.isLock(userId)) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {
@@ -318,7 +318,7 @@ export class ArticleContent extends IContent {
     }
 
     async isLock(userId?: number): Promise<boolean> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {

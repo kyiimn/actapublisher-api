@@ -137,7 +137,7 @@ export class PagePrint {
     set status(status) { this._status = status; }
 
     static async create(data: IPagePrint): Promise<PagePrint | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_page_print (publish_id, edition_id, local_id, adver_local_id, print_type_id, status) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id ',
@@ -154,7 +154,7 @@ export class PagePrint {
     }
 
     static async get(id: number): Promise<PagePrint | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -185,7 +185,7 @@ export class PagePrint {
         }
     }
     static async selectByPubInfo(publishId: number): Promise<PagePrint[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -221,7 +221,7 @@ export class PagePrint {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_page_print SET status=$1 WHERE id=$2',
@@ -236,7 +236,7 @@ export class PagePrint {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_page_print WHERE id=$1', [this.id]);
             return true;

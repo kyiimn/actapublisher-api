@@ -21,7 +21,7 @@ export class StorageDef {
     }
 
     static async create(data: IStorageDef): Promise<StorageDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_storage_def (id, name, base_path, archive) VALUES ($1, $2, $3, $4) RETURNING id',
@@ -38,7 +38,7 @@ export class StorageDef {
     }
 
     static async get(id: number): Promise<StorageDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT id, name, base_path, archive FROM t_config_storage_def WHERE id=$1', [id]);
             if (res.rowCount < 1) return null;
@@ -51,7 +51,7 @@ export class StorageDef {
     }
 
     static async select(): Promise<StorageDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT id, name, base_path, archive FROM t_config_storage_def ORDER BY id ');
             let ret = [];
@@ -67,7 +67,7 @@ export class StorageDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_storage_def SET name=$1, base_path=$2, archive=$3 WHERE id=$4',
@@ -82,7 +82,7 @@ export class StorageDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_storage_def WHERE id=$1', [this.id]);
             return true;

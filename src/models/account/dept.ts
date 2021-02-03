@@ -33,7 +33,7 @@ export class AccountDept {
     }
 
     static async create(data: IAccountDept): Promise<AccountDept | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_account_dept (id, media_id, name, sort, invalid_flag, "group", group_list) VALUES ($1, $2, $3, $4, $5, $6, $7) ',
@@ -48,7 +48,7 @@ export class AccountDept {
     }
 
     static async get(id: number): Promise<AccountDept | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT D.id, D.media_id, D.name, D.sort, D.invalid_flag, D."group", D.group_list, M.name media_name FROM t_account_dept D ' +
@@ -66,7 +66,7 @@ export class AccountDept {
     }
 
     static async selectByMediaId(mediaId: number): Promise<AccountDept[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT D.id, D.media_id, D.name, D.sort, D.invalid_flag, D."group", D.group_list, M.name media_name FROM t_account_dept D ' +
@@ -87,7 +87,7 @@ export class AccountDept {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_account_dept SET name=$1, sort=$2, invalid_flag=$3, "group"=$4, group_list=$5 WHERE id=$6',
@@ -102,7 +102,7 @@ export class AccountDept {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_account_dept WHERE id=$1', [this.id]);
             return true;

@@ -22,7 +22,7 @@ export class MediaDef {
     }
 
     static async create(data: IMediaDef): Promise<MediaDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_media_def (id, name, type) VALUES ($1, $2, $3) RETURNING id',
@@ -39,7 +39,7 @@ export class MediaDef {
     }
 
     static async get(id: number): Promise<MediaDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -59,7 +59,7 @@ export class MediaDef {
     }
 
     static async select() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -82,7 +82,7 @@ export class MediaDef {
     }
 
     static async selectByType(type: string): Promise<MediaDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -105,7 +105,7 @@ export class MediaDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('UPDATE t_config_media_def SET name=$1, type=$2 WHERER id=$3', [this.name, this.type, this.id]);
             return true;
@@ -117,7 +117,7 @@ export class MediaDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_media_def WHERE id=$1', [this.id]);
             return true;

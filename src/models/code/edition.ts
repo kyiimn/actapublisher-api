@@ -28,7 +28,7 @@ export class EditionDef {
     }
 
     static async create(data: IEditionDef): Promise<EditionDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_edition_def (edition, name, media_id, use) VALUES ($1, $2, $3, $4) RETURNING id',
@@ -45,7 +45,7 @@ export class EditionDef {
     }
 
     static async get(id: number): Promise<EditionDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -65,7 +65,7 @@ export class EditionDef {
     }
 
     static async getByCode(mediaId: number, edition: number): Promise<EditionDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -85,7 +85,7 @@ export class EditionDef {
     }
 
     static async selectByMediaId(mediaId: number): Promise<EditionDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -108,7 +108,7 @@ export class EditionDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_edition_def SET edition=$1, name=$2, use=$3 WHERE id=$4',
@@ -123,7 +123,7 @@ export class EditionDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_edition_def WHERE id=$1', [this.id]);
             return true;

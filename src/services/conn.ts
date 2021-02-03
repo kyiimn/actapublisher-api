@@ -25,5 +25,4 @@ class ActaServerDBConnection {
         return this._pool.connect();
     }
 }
-
-export default ActaServerDBConnection;
+export default ActaServerDBConnection.in;

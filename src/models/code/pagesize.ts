@@ -88,7 +88,7 @@ export class PageSizeDef {
     }
 
     static async create(data: IPageSizeDef): Promise<PageSizeDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_page_size_def (' +
@@ -120,7 +120,7 @@ export class PageSizeDef {
     }
 
     static async get(id: number): Promise<PageSizeDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -148,7 +148,7 @@ export class PageSizeDef {
     }
 
     static async select(): Promise<PageSizeDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -179,7 +179,7 @@ export class PageSizeDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_page_size_def SET ' +
@@ -208,7 +208,7 @@ export class PageSizeDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_page_size_def WHERE id=$1', [this.id]);
             return true;

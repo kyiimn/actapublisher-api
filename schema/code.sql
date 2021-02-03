@@ -74,11 +74,11 @@ INSERT INTO t_config_closing_time_def (closing_time, media_id, page, edition_id)
 INSERT INTO t_config_closing_time_def (closing_time, media_id, page, edition_id) VALUES ('180000', 1, 0, 2);
 INSERT INTO t_config_closing_time_def (closing_time, media_id, page, edition_id) VALUES ('200000', 1, 0, 3);
 
-INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (1, 'IMAGE', '/image', 0);
-INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (2, 'ADVER', '/adver', 0);
-INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (3, 'ARTICLE', '/article', 0);
-INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (4, 'PAGE', '/page', 0);
-INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (5, 'FONT', '/font', 0);
+INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (1, 'IMAGE', '/home/kyiimn/WWWRoot/acta-data/image', 0);
+INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (2, 'ADVER', '/home/kyiimn/WWWRoot/acta-data/adver', 0);
+INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (3, 'ARTICLE', '/home/kyiimn/WWWRoot/acta-data/article', 0);
+INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (4, 'PAGE', '/home/kyiimn/WWWRoot/acta-data/page', 0);
+INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (5, 'FONT', '/home/kyiimn/WWWRoot/acta-data/font', 0);
 
 INSERT INTO t_config_page_size_def
  (name, paper_type, paper_width, paper_height, paper_direction, linespacing_size, linespacing_unit, linespacing_ratio, col_margin_inside, col_margin_outside, col_count, col_size, col_spacing, col_other, col_total_size, line_margin_top, line_margin_bottom, line_height, line_count, line_spacing, line_other, line_total_size) 
@@ -87,7 +87,7 @@ INSERT INTO t_config_page_size_def
 INSERT INTO t_account_dept (id, media_id, name, sort, invalid_flag, "group") VALUES (1, 1, '개발부', 1, 0, 0);
 INSERT INTO t_account_user (media_id, dept_id, login_name, name, password, use, level, rule, fixed) VALUES (1, 1, 'ykim', '김김', '1234', 1, 1, 1, 1);
 
-INSERT INTO t_config_font (media_id, name, file_storage_id, file_extension, file_size, sort) VALUES (1, '명조', 5, 'ttf', 0, 1);
-INSERT INTO t_config_font (media_id, name, file_storage_id, file_extension, file_size, sort) VALUES (1, '고딕', 5, 'ttf', 0, 2);
+INSERT INTO t_config_font_def (media_id, name, file_storage_id, file_extension, file_size, sort) VALUES (1, '명조', 5, 'ttf', 0, 1);
+INSERT INTO t_config_font_def (media_id, name, file_storage_id, file_extension, file_size, sort) VALUES (1, '고딕', 5, 'ttf', 0, 2);
 
 INSERT INTO t_config_textstyle_def (media_id, name, sort, font_id, font_size, color, xscale, letter_spacing, line_height, text_align, underline, strikeline, indent) VALUES (1, '본문', 1, 1, 3.88056, '#000000000fff', 1, 0, 1, 0, 0, 0, 0);

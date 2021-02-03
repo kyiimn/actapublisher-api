@@ -24,7 +24,7 @@ export class AdverSizeDef {
     }
 
     static async create(data: IAdverSizeDef): Promise<AdverSizeDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_adver_size_def (id, name, media_id, use) VALUES ($1, $2, $3, $4) RETURNING id',
@@ -41,7 +41,7 @@ export class AdverSizeDef {
     }
 
     static async get(id: number): Promise<AdverSizeDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -61,7 +61,7 @@ export class AdverSizeDef {
     }
 
     static async getByMediaId(mediaId: number, id: number): Promise<AdverSizeDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -81,7 +81,7 @@ export class AdverSizeDef {
     }
 
     static async selectByMediaId(mediaId: number): Promise<AdverSizeDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -104,7 +104,7 @@ export class AdverSizeDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_adver_size_def SET name=$1, use=$2 WHERE id=$3',
@@ -119,7 +119,7 @@ export class AdverSizeDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_adver_size_def WHERE id=$1', [this.id]);
             return true;

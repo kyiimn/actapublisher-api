@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 
 import router from './router';
 
-import ActaSessionManager from './services/session';
+import sessionMan from './services/session';
 import { Request, Response } from './services/session';
 
 class ActaServerApp {
@@ -21,14 +21,14 @@ class ActaServerApp {
             }));
         }
         this._app.use(cookieParser());
-        this._app.use((r, s, n) => ActaSessionManager.in.session(r, s, n));
+        this._app.use((r, s, n) => sessionMan.session(r, s, n));
     }
 
     private async _router() {
         await router(this._app);
 
         this._app.use('/hello', (_, res: Response) => res.send('hello!'));
-        this._app.use((r, s) => ActaSessionManager.in.result(r, s));
+        this._app.use((r, s) => sessionMan.result(r, s));
     }
 
     async run() {

@@ -53,7 +53,7 @@ export class CodeClassDef {
     static readonly CLASS_ADVERSTATUS = 19;
 
     static async create(data: ICodeClassDef): Promise<CodeClassDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_code_def (class, code, name, media_id, sort, use) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
@@ -70,7 +70,7 @@ export class CodeClassDef {
     }
 
     static async get(id: number): Promise<CodeClassDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -90,7 +90,7 @@ export class CodeClassDef {
     }
 
     static async getByCode(codeClass: number, code: string): Promise<CodeClassDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -110,7 +110,7 @@ export class CodeClassDef {
     }
 
     static async selectByMediaId(mediaId: number): Promise<CodeClassDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -134,7 +134,7 @@ export class CodeClassDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_code_def SET code=$1, name=$2, sort=$3, use=$4 WHERE id=$5',
@@ -149,7 +149,7 @@ export class CodeClassDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_code_def WHERE id=$1', [this.id]);
             return true;

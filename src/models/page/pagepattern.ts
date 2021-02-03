@@ -66,7 +66,7 @@ export class PagePattern extends IPage {
     set rawdata(rawdata) { this._data = rawdata; }
 
     static async create(data: IPagePattern): Promise<PagePattern | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_page_pattern (title, reg_date, reg_user_id, data, lock) VALUES ($1, now(), $2, $3, 1) RETURNING id',
@@ -83,7 +83,7 @@ export class PagePattern extends IPage {
     }
 
     static async get(id: number): Promise<PagePattern | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -107,7 +107,7 @@ export class PagePattern extends IPage {
     }
 
     static async select(): Promise<PagePattern[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 ' P.id, P.title, ' +
@@ -132,7 +132,7 @@ export class PagePattern extends IPage {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_page_pattern SET title=$1, modify_date=now(), modify_user_id=$2 WHERE id=$3',
@@ -147,7 +147,7 @@ export class PagePattern extends IPage {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_page_pattern WHERE id=$1', [this.id]);
             return true;
@@ -161,7 +161,7 @@ export class PagePattern extends IPage {
     async setLock(userId: number): Promise<boolean> {
         if (await this.isLock()) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('UPDATE t_page_pattern SET lock=1, lock_date=now(), lock_user_id=$1 WHERE id=$2', [userId, this.id]);
             return true;
@@ -173,7 +173,7 @@ export class PagePattern extends IPage {
     }
 
     async getLock(): Promise<ILockInfo | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT ' +
                 ' C.lock lock, TO_CHAR(C.lock_date, \'YYYYMMDDHH24MMISS\') lock_date, ' +
@@ -198,7 +198,7 @@ export class PagePattern extends IPage {
     async releaseLock(userId?: number): Promise<boolean> {
         if (await this.isLock(userId)) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {
@@ -215,7 +215,7 @@ export class PagePattern extends IPage {
     }
 
     async isLock(userId?: number): Promise<boolean> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {

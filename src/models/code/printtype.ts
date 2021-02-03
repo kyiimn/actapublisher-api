@@ -15,7 +15,7 @@ export class PrintTypeDef {
     }
 
     static async create(data: IPrintTypeDef): Promise<PrintTypeDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_print_type_def (id, name) VALUES ($1, $2) RETURNING id',
@@ -32,7 +32,7 @@ export class PrintTypeDef {
     }
 
     static async get(id: number): Promise<PrintTypeDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT id, name FROM t_config_print_type_def WHERE id=$1', [id]);
             if (res.rowCount < 1) return null;
@@ -45,7 +45,7 @@ export class PrintTypeDef {
     }
 
     static async select(): Promise<PrintTypeDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT id, name FROM t_config_print_type_def ORDER BY id ');
             let ret = [];
@@ -61,7 +61,7 @@ export class PrintTypeDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_print_type_def SET name=$1 WHERE id=$2',
@@ -76,7 +76,7 @@ export class PrintTypeDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_print_type_def WHERE id=$1', [this.id]);
             return true;

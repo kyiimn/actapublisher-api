@@ -91,7 +91,7 @@ export class PageTemplate extends IPage {
     set modifyUserId(modifyUserId) { this._modifyUserId = modifyUserId; }
 
     static async create(data: IPageTemplate): Promise<PageTemplate | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_page_template (title, page_size_id, reg_date, reg_user_id, adver_size_id, whole, file_storage_id) VALUES ($1,$2,now(),$3,$4,$5,$6) RETURNING id ',
@@ -108,7 +108,7 @@ export class PageTemplate extends IPage {
     }
 
     static async get(id: number): Promise<PageTemplate | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -135,7 +135,7 @@ export class PageTemplate extends IPage {
     }
 
     static async select(): Promise<PageTemplate[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -164,7 +164,7 @@ export class PageTemplate extends IPage {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_page_template SET title=$1, adver_size_id=$2, modify_date=now(), modify_user_id=$3 WHERE id=$4',
@@ -179,7 +179,7 @@ export class PageTemplate extends IPage {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_page_template WHERE id=$1', [this.id]);
             return true;
@@ -193,7 +193,7 @@ export class PageTemplate extends IPage {
     async setLock(userId: number): Promise<boolean> {
         if (await this.isLock()) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('UPDATE t_page_template SET lock=1, lock_date=now(), lock_user_id=$1 WHERE id=$2', [userId, this.id]);
             return true;
@@ -205,7 +205,7 @@ export class PageTemplate extends IPage {
     }
 
     async getLock(): Promise<ILockInfo | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('SELECT ' +
                 ' C.lock lock, TO_CHAR(C.lock_date, \'YYYYMMDDHH24MMISS\') lock_date, ' +
@@ -230,7 +230,7 @@ export class PageTemplate extends IPage {
     async releaseLock(userId?: number): Promise<boolean> {
         if (await this.isLock(userId)) return false;
 
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {
@@ -247,7 +247,7 @@ export class PageTemplate extends IPage {
     }
 
     async isLock(userId?: number): Promise<boolean> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             let res;
             if (userId) {

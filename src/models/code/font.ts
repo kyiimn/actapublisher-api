@@ -33,7 +33,7 @@ export class FontDef {
     }
 
     static async create(data: IFontDef): Promise<FontDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'INSERT t_config_font_def (media_id, name, file_storage_id, file_extension, file_size, sort) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
@@ -50,7 +50,7 @@ export class FontDef {
     }
 
     static async get(id: number): Promise<FontDef | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -70,7 +70,7 @@ export class FontDef {
     }
 
     static async selectByMediaId(mediaId: number): Promise<FontDef[] | null> {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'SELECT ' +
@@ -94,7 +94,7 @@ export class FontDef {
     }
 
     async save() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query(
                 'UPDATE t_config_font_def SET name=$1, sort=$2 WHERE id=$3',
@@ -109,7 +109,7 @@ export class FontDef {
     }
 
     async delete() {
-        const client = await conn.in.getClient();
+        const client = await conn.getClient();
         try {
             const res = await client.query('DELETE FROM t_config_font_def WHERE id=$1', [this.id]);
             return true;
