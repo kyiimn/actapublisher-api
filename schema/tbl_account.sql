@@ -29,3 +29,14 @@ CREATE TABLE t_account_user (
     CONSTRAINT unique_account_user UNIQUE (login_name)
 ) WITH (OIDS = FALSE);
 
+-- DROP TABLE t_account_preference;
+CREATE TABLE t_account_preference (
+    id bigserial NOT NULL,
+    media_id bigint NOT NULL,
+    frame_unit_type character varying(8) NOT NULL,
+    text_unit_type character varying(8) NOT NULL,
+    dpi integer NOT NULL,
+    options jsonb NOT NULL,
+    CONSTRAINT pk_account_preference_id PRIMARY KEY (id),
+    CONSTRAINT unique_account_preference UNIQUE (media_id)
+) WITH (OIDS = FALSE);

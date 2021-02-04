@@ -31,4 +31,14 @@ export default async (app: express.Application) => {
         }
         next();
     });
+    app.get('/v1/info/account/preference', async (req: Request, res: Response, next) => {
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoAccountService.preference(mediaId);
+            res.result = result;
+        }
+        next();
+    });
 };

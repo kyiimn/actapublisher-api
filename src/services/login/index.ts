@@ -1,6 +1,7 @@
 import { Request } from '../session';
 import { AccountDept } from '../../models/account/dept';
 import { AccountUser } from '../../models/account/user';
+import { AccountPreference } from '../../models/account/preference';
 
 export default {
     getLoginInfo: async (req: Request) => {
@@ -17,12 +18,14 @@ export default {
         };
         const dept = req.session.deptId ? await AccountDept.get(req.session.deptId) : null;
         const user = req.session.userId ? await AccountUser.get(req.session.userId) : null;
+        const pref = req.session.mediaId ? await AccountPreference.getByMediaId(req.session.mediaId) : null;
 
         return {
             logined: req.session.logined,
             mediaId: req.session.mediaId,
             dept: dept ? dept.data : null,
-            user: user ? user.data : null
+            user: user ? user.data : null,
+            preference: pref ? pref.data : null
         };
     }
 };
