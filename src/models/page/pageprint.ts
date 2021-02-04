@@ -11,8 +11,8 @@ export interface IPagePrint {
     sectionId?: number,
     sectionName?: string,
     sectionPage?: number,
-    colorId?: number,
-    colorName?: string,
+    colorType?: string,
+    colorTypeName?: string,
     pageSizeId?: number,
     pageSizeName?: string,
     whole?: boolean
@@ -38,8 +38,8 @@ export class PagePrint {
     private _sectionId: number;
     private _sectionName: string;
     private _sectionPage: number;
-    private _colorId: number;
-    private _colorName: string;
+    private _colorType: string;
+    private _colorTypeName: string;
     private _pageSizeId: number;
     private _pageSizeName: string;
     private _whole: boolean;
@@ -64,8 +64,8 @@ export class PagePrint {
         this._sectionId = parseInt(dbdata.section_id, 10);
         this._sectionName = dbdata.section_name;
         this._sectionPage = dbdata.section_page;
-        this._colorId = parseInt(dbdata.color_id, 10);
-        this._colorName = dbdata.color_name;
+        this._colorType = dbdata.color_type;
+        this._colorTypeName = dbdata.color_type_name;
         this._pageSizeId = parseInt(dbdata.page_size_id, 10);
         this._pageSizeName = dbdata.page_size_name;
         this._whole = dbdata.whole ? true : false;
@@ -90,8 +90,8 @@ export class PagePrint {
     get sectionId() { return this._sectionId; }
     get sectionName() { return this._sectionName; }
     get sectionPage() { return this._sectionPage; }
-    get colorId() { return this._colorId; }
-    get colorName() { return this._colorName; }
+    get colorType() { return this._colorType; }
+    get colorTypeName() { return this._colorTypeName; }
     get pageSizeId() { return this._pageSizeId; }
     get pageSizeName() { return this._pageSizeName; }
     get whole() { return this._whole; };
@@ -116,8 +116,8 @@ export class PagePrint {
             sectionId: this.sectionId,
             sectionName: this.sectionName,
             sectionPage: this.sectionPage,
-            colorId: this.colorId,
-            colorName: this.colorName,
+            colorType: this.colorType,
+            colorTypeName: this.colorTypeName,
             pageSizeId: this.pageSizeId,
             pageSizeName: this.pageSizeName,
             whole: this.whole,
@@ -159,22 +159,22 @@ export class PagePrint {
             const res = await client.query(
                 'SELECT ' +
                 ' P.id, P.publish_id, P.edition_id, P.local_id, P.adver_local_id, P.print_type_id, P.status, ' +
-                ' PU.media_id, PU.pub_date, PU.page, PU.section_id, PU.section_page, PU.color_id, PU.page_size_id, PU.whole, ' +
-                ' ME.name media_name, SE.name section_name, CO.name color_name, PS.name page_size_name, ' +
+                ' PU.media_id, PU.pub_date, PU.page, PU.section_id, PU.section_page, PU.color_type, PU.page_size_id, PU.whole, ' +
+                ' ME.name media_name, SE.name section_name, CO.name color_type_name, PS.name page_size_name, ' +
                 ' ED.name edition_name, LO.name local_name, A.name adver_local_name, PT.name print_type_name, CC.name status_name ' +
                 'FROM t_page_print P ' +
                 'LEFT JOIN t_page_publish_info PU ON PU.id = P.publish_id ' +
                 'LEFT JOIN t_config_media_def ME ON ME.id = PU.media_id ' +
                 'LEFT JOIN t_config_section_def SE ON SE.id = PU.section_id ' +
-                'LEFT JOIN t_config_color_def CO ON CO.id = PU.color_id ' +
+                'LEFT JOIN t_config_code_def CO ON CO.class=$1 AND CO.code = PU.color_type ' +
                 'LEFT JOIN t_config_page_size_def PS ON PS.id = PU.page_size_id ' +
                 'LEFT JOIN t_config_edition_def ED ON ED.id = P.edition_id ' +
                 'LEFT JOIN t_config_local_def LO ON LO.id = P.local_id ' +
                 'LEFT JOIN t_config_adver_local_def A ON A.id = P.adver_local_id ' +
                 'LEFT JOIN t_config_print_type_def PT ON PT.id = P.print_type_id ' +
-                'LEFT JOIN t_config_code_def CC ON CC.class=$1 AND CC.code = P.status ' +
-                'WHERE P.id=$2 ',
-                [CodeClassDef.CLASS_PAGEPRINTSTATUS, id]
+                'LEFT JOIN t_config_code_def CC ON CC.class=$2 AND CC.code = P.status ' +
+                'WHERE P.id=$3 ',
+                [CodeClassDef.CLASS_COLORTYPE, CodeClassDef.CLASS_PAGEPRINTSTATUS, id]
             );
             if (res.rowCount < 1) return null;
             return new PagePrint(res.rows[0]);
@@ -190,23 +190,23 @@ export class PagePrint {
             const res = await client.query(
                 'SELECT ' +
                 ' P.id, P.publish_id, P.edition_id, P.local_id, P.adver_local_id, P.print_type_id, P.status, ' +
-                ' PU.media_id, PU.pub_date, PU.page, PU.section_id, PU.section_page, PU.color_id, PU.page_size_id, PU.whole, ' +
-                ' ME.name media_name, SE.name section_name, CO.name color_name, PS.name page_size_name, ' +
+                ' PU.media_id, PU.pub_date, PU.page, PU.section_id, PU.section_page, PU.color_type, PU.page_size_id, PU.whole, ' +
+                ' ME.name media_name, SE.name section_name, CO.name color_type_name, PS.name page_size_name, ' +
                 ' ED.name edition_name, LO.name local_name, A.name adver_local_name, PT.name print_type_name, CC.name status_name ' +
                 'FROM t_page_print P ' +
                 'LEFT JOIN t_page_publish_info PU ON PU.id = P.publish_id ' +
                 'LEFT JOIN t_config_media_def ME ON ME.id = PU.media_id ' +
                 'LEFT JOIN t_config_section_def SE ON SE.id = PU.section_id ' +
-                'LEFT JOIN t_config_color_def CO ON CO.id = PU.color_id ' +
+                'LEFT JOIN t_config_code_def CO ON CO.class=$1 AND CO.code = PU.color_type ' +
                 'LEFT JOIN t_config_page_size_def PS ON PS.id = PU.page_size_id ' +
                 'LEFT JOIN t_config_edition_def ED ON ED.id = P.edition_id ' +
                 'LEFT JOIN t_config_local_def LO ON LO.id = P.local_id ' +
                 'LEFT JOIN t_config_adver_local_def A ON A.id = P.adver_local_id ' +
                 'LEFT JOIN t_config_print_type_def PT ON PT.id = P.print_type_id ' +
-                'LEFT JOIN t_config_code_def CC ON CC.class=$1 AND CC.code = P.status ' +
-                'WHERE P.publish_id=$2 ' +
+                'LEFT JOIN t_config_code_def CC ON CC.class=$2 AND CC.code = P.status ' +
+                'WHERE P.publish_id=$3 ' +
                 'ORDER BY P.publish_id, P.edition_id, P.local_id, P.adver_local_id DESC ',
-                [CodeClassDef.CLASS_PAGEPRINTSTATUS, publishId]
+                [CodeClassDef.CLASS_COLORTYPE, CodeClassDef.CLASS_PAGEPRINTSTATUS, publishId]
             );
             let ret = [];
             for (const row of res.rows) {

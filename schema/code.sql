@@ -47,6 +47,9 @@ INSERT INTO t_config_code_def (class, code, name, sort, use) VALUES (18, 'END', 
 INSERT INTO t_config_code_def (class, code, name, use) VALUES (19, 'INSERT', '원본', 1);
 INSERT INTO t_config_code_def (class, code, name, use) VALUES (19, 'WORK', '리터치대기', 1);
 INSERT INTO t_config_code_def (class, code, name, use) VALUES (19, 'COMPLATE', '리터치완료', 1);
+INSERT INTO t_config_code_def (class, code, name, use) VALUES (20, 'CMYK', 'CMYK', 1);
+INSERT INTO t_config_code_def (class, code, name, use) VALUES (20, 'GRAY', 'GRAYSCALE', 1);
+INSERT INTO t_config_code_def (class, code, name, use) VALUES (20, 'RGB', 'RGB', 1);
 
 INSERT INTO t_config_media_def (id, name, type) VALUES (1, '아시아경제', 'PAPER');
 
@@ -63,9 +66,11 @@ INSERT INTO t_config_adver_size_def (id, name, media_id, use) VALUES (1, '1단',
 
 INSERT INTO t_config_adver_local_def (code, name, media_id, sort, use) VALUES ('A', '전국', 1, 1, 1);
 
-INSERT INTO t_config_color_def (id, name) VALUES (1, 'CMYK');
-INSERT INTO t_config_color_def (id, name) VALUES (2, 'GRAYSCALE');
-INSERT INTO t_config_color_def (id, name) VALUES (3, 'RGB');
+INSERT INTO t_config_color_def (media_id, name, color_type, code, sort) VALUES (1, '검정색', 'RGB', '#000000', 1);
+INSERT INTO t_config_color_def (media_id, name, color_type, code, sort) VALUES (1, '흰색'  , 'RGB', '#ffffff', 2);
+INSERT INTO t_config_color_def (media_id, name, color_type, code, sort) VALUES (1, '빨강색', 'RGB', '#ff0000', 3);
+INSERT INTO t_config_color_def (media_id, name, color_type, code, sort) VALUES (1, '녹색'  , 'RGB', '#00ff00', 4);
+INSERT INTO t_config_color_def (media_id, name, color_type, code, sort) VALUES (1, '파란색', 'RGB', '#0000ff', 5);
 
 INSERT INTO t_config_print_type_def (id, name) VALUES (1, 'PDF출력');
 INSERT INTO t_config_print_type_def (id, name) VALUES (2, '지면출력');
@@ -90,4 +95,4 @@ INSERT INTO t_account_user (media_id, dept_id, login_name, name, password, use, 
 INSERT INTO t_config_font_def (media_id, name, file_storage_id, file_extension, file_size, sort) VALUES (1, '명조', 5, 'ttf', 0, 1);
 INSERT INTO t_config_font_def (media_id, name, file_storage_id, file_extension, file_size, sort) VALUES (1, '고딕', 5, 'ttf', 0, 2);
 
-INSERT INTO t_config_textstyle_def (media_id, name, sort, font_id, font_size, color, xscale, letter_spacing, line_height, text_align, underline, strikeline, indent) VALUES (1, '본문', 1, 1, 3.88056, '#000000000fff', 1, 0, 1, 0, 0, 0, 0);
+INSERT INTO t_config_textstyle_def (media_id, name, sort, font_id, font_size, color_id, xscale, letter_spacing, line_height, text_align, underline, strikeline, indent) VALUES (1, '본문', 1, 1, 3.88056, 1, 1, 0, 1, 0, 0, 0, 0);

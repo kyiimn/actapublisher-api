@@ -51,6 +51,7 @@ export class CodeClassDef {
     static readonly CLASS_IMAGESTATUS = 17;
     static readonly CLASS_PAGEADVERSTATUS = 18;
     static readonly CLASS_ADVERSTATUS = 19;
+    static readonly CLASS_COLORTYPE = 20;
 
     static async create(data: ICodeClassDef): Promise<CodeClassDef | null> {
         const client = await conn.getClient();

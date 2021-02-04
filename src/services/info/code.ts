@@ -62,8 +62,8 @@ export default {
         for (const model of resultModels) ret.push(model.data);
         return ret;
     },
-    color: async () => {
-        const resultModels = await ColorDef.select();
+    color: async (mediaId: number) => {
+        const resultModels = await ColorDef.selectByMediaId(mediaId);
         const ret: IColorDef[] = [];
         if (resultModels === null) return null;
         for (const model of resultModels) ret.push(model.data);

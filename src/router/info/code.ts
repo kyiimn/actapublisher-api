@@ -77,8 +77,13 @@ export default async (app: express.Application) => {
         next();
     });
     app.get('/v1/info/code/color', async (req: Request, res: Response, next) => {
-        const result = await infoCodeService.color();
-        res.result = result;
+        const mediaId = req.session?.mediaId;
+        if (!mediaId) {
+            res.resultMessage = '매체정보가 없습니다.';
+        } else {
+            const result = await infoCodeService.color(mediaId);
+            res.result = result;
+        }
         next();
     });
     app.get('/v1/info/code/printtype', async (req: Request, res: Response, next) => {

@@ -1,4 +1,5 @@
 import conn from '../../services/conn';
+import { CodeClassDef } from '../code/codeclass';
 
 export interface IPageWeekPlan {
     id?: number,
@@ -9,8 +10,8 @@ export interface IPageWeekPlan {
     sectionId: number,
     sectionName?: string,
     sectionPage: number,
-    colorId: number,
-    colorName?: string,
+    colorType: string,
+    colorTypeName?: string,
     pageSizeId: number,
     pageSizeName?: string,
     templateId: number,
@@ -29,8 +30,8 @@ export class PageWeekPlan {
     private _sectionId: number;
     private _sectionName: string;
     private _sectionPage: number;
-    private _colorId: number;
-    private _colorName: string;
+    private _colorType: string;
+    private _colorTypeName: string;
     private _pageSizeId: number;
     private _pageSizeName: string;
     private _templateId: number;
@@ -48,8 +49,8 @@ export class PageWeekPlan {
         this._sectionId = parseInt(dbdata.section_id, 10);
         this._sectionName = dbdata.section_name;
         this._sectionPage = dbdata.section_page;
-        this._colorId = parseInt(dbdata.color_id, 10);
-        this._colorName = dbdata.color_name;
+        this._colorType = dbdata.color_type;
+        this._colorTypeName = dbdata.color_type_name;
         this._pageSizeId = parseInt(dbdata.page_size_id, 10);
         this._pageSizeName = dbdata.page_size_name;
         this._templateId = parseInt(dbdata.template_id, 10);
@@ -67,8 +68,8 @@ export class PageWeekPlan {
     get sectionId() { return this._sectionId; }
     get sectionName() { return this._sectionName; }
     get sectionPage() { return this._sectionPage; }
-    get colorId() { return this._colorId; }
-    get colorName() { return this._colorName; }
+    get colorType() { return this._colorType; }
+    get colorTypeName() { return this._colorTypeName; }
     get pageSizeId() { return this._pageSizeId; }
     get pageSizeName() { return this._pageSizeName; }
     get templateId() { return this._templateId; }
@@ -86,8 +87,8 @@ export class PageWeekPlan {
             sectionId: this.sectionId,
             sectionName: this.sectionName,
             sectionPage: this.sectionPage,
-            colorId: this.colorId,
-            colorName: this.colorName,
+            colorType: this.colorType,
+            colorTypeName: this.colorTypeName,
             pageSizeId: this.pageSizeId,
             pageSizeName: this.pageSizeName,
             templateId: this.templateId,
@@ -99,7 +100,7 @@ export class PageWeekPlan {
     }
     set sectionId(sectionId) { this._sectionId = sectionId; }
     set sectionPage(sectionPage) { this._sectionPage = sectionPage; }
-    set colorId(colorId) { this._colorId = colorId; }
+    set colorType(colorType) { this._colorType = colorType; }
     set pageSizeId(pageSizeId) { this._pageSizeId = pageSizeId; }
     set templateId(templateId) { this._templateId = templateId; }
     set userId(userId) { this._userId = userId; }
@@ -110,10 +111,10 @@ export class PageWeekPlan {
         try {
             const res = await client.query(
                 'INSERT INTO t_page_week_plan (' +
-                ' media_id, week, page, section_id, section_page, color_id, page_size_id, template_id, user_id, whole ' +
+                ' media_id, week, page, section_id, section_page, color_type, page_size_id, template_id, user_id, whole ' +
                 ') VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id',
                 [
-                    data.mediaId, data.week, data.page, data.sectionId, data.sectionPage, data.colorId,
+                    data.mediaId, data.week, data.page, data.sectionId, data.sectionPage, data.colorType,
                     data.pageSizeId, data.templateId, data.userId, data.whole
                 ]
             );
@@ -131,17 +132,17 @@ export class PageWeekPlan {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' W.id, W.media_id, W.week, W.page, W.section_id, W.section_page, W.color_id, W.page_size_id, W.template_id, W.user_id, W.whole, ' +
-                ' M.name media_id, S.name section_name, C.name color_name, P.name page_size_name, T.name template_name, U.name user_name ' +
+                ' W.id, W.media_id, W.week, W.page, W.section_id, W.section_page, W.color_type, W.page_size_id, W.template_id, W.user_id, W.whole, ' +
+                ' M.name media_id, S.name section_name, C.name color_type_name, P.name page_size_name, T.name template_name, U.name user_name ' +
                 'FROM t_page_week_plan W ' +
                 'LEFT JOIN t_config_media_def M ON M.id = W.media_id ' +
                 'LEFF JOIN t_config_section_def S ON S.id = W.section_id ' +
-                'LEFT JOIN t_config_color_def C ON C.id = W.color_id ' +
+                'LEFT JOIN t_config_code_def C ON C.class=$1 AND C.code = W.color_type ' +
                 'LEFT JOIN t_config_page_size_def P ON P.id = W.page_size_id ' +
                 'LEFT JOIN t_page_template T ON T.id = W.template_id ' +
                 'LEFT JOIN t_account_user U ON U.id = W.user_id ' +
-                'WHERE W.id = $1 ',
-                [id]
+                'WHERE W.id = $2 ',
+                [CodeClassDef.CLASS_COLORTYPE, id]
             );
             if (res.rowCount < 1) return null;
             return new PageWeekPlan(res.rows[0]);
@@ -157,17 +158,17 @@ export class PageWeekPlan {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' W.id, W.media_id, W.week, W.page, W.section_id, W.section_page, W.color_id, W.page_size_id, W.template_id, W.user_id, W.whole, ' +
-                ' M.name media_id, S.name section_name, C.name color_name, P.name page_size_name, T.name template_name, U.name user_name ' +
+                ' W.id, W.media_id, W.week, W.page, W.section_id, W.section_page, W.color_type, W.page_size_id, W.template_id, W.user_id, W.whole, ' +
+                ' M.name media_id, S.name section_name, C.name color_type_name, P.name page_size_name, T.name template_name, U.name user_name ' +
                 'FROM t_page_week_plan W ' +
                 'LEFT JOIN t_config_media_def M ON M.id = W.media_id ' +
                 'LEFF JOIN t_config_section_def S ON S.id = W.section_id ' +
-                'LEFT JOIN t_config_color_def C ON C.id = W.color_id ' +
+                'LEFT JOIN t_config_code_def C ON C.class=$1 AND C.code = W.color_type ' +
                 'LEFT JOIN t_config_page_size_def P ON P.id = W.page_size_id ' +
                 'LEFT JOIN t_page_template T ON T.id = W.template_id ' +
                 'LEFT JOIN t_account_user U ON U.id = W.user_id ' +
-                'WHERE W.media_id=$1 AND W.week=$2 ORDER BY W.page ',
-                [mediaId, week]
+                'WHERE W.media_id=$2 AND W.week=$3 ORDER BY W.page ',
+                [CodeClassDef.CLASS_COLORTYPE, mediaId, week]
             );
             let ret = [];
             for (const row of res.rows) {
@@ -186,9 +187,9 @@ export class PageWeekPlan {
         try {
             const res = await client.query(
                 'UPDATE t_page_week_plan SET ' +
-                ' section_id=$1, section_page=$2, color_id=$3, page_size_id=$4, template_id=$5, user_id=$6, whole=$7 ' +
+                ' section_id=$1, section_page=$2, color_type=$3, page_size_id=$4, template_id=$5, user_id=$6, whole=$7 ' +
                 'WHERE id=%8 ',
-                [this.sectionId, this.sectionPage, this.colorId, this.pageSizeId, this.templateId, this.userId, this.whole, this.id]
+                [this.sectionId, this.sectionPage, this.colorType, this.pageSizeId, this.templateId, this.userId, this.whole, this.id]
             );
             if (res.rowCount < 1) return null;
             return true;

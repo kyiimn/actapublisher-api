@@ -1,4 +1,5 @@
 import conn from '../../services/conn';
+import { CodeClassDef } from '../code/codeclass';
 
 export interface IPagePublishInfo {
     id?: number,
@@ -9,8 +10,8 @@ export interface IPagePublishInfo {
     sectionId: number,
     sectionName?: string,
     sectionPage: number,
-    colorId: number,
-    colorName?: string,
+    colorType: string,
+    colorTypeName?: string,
     pageSizeId: number,
     pageSizeName?: string,
     whole: boolean
@@ -25,8 +26,8 @@ export class PagePublishInfo {
     private _sectionId: number;
     private _sectionName: string;
     private _sectionPage: number;
-    private _colorId: number;
-    private _colorName: string;
+    private _colorType: string;
+    private _colorTypeName: string;
     private _pageSizeId: number;
     private _pageSizeName: string;
     private _whole: boolean;
@@ -40,8 +41,8 @@ export class PagePublishInfo {
         this._sectionId = parseInt(dbdata.section_id, 10);
         this._sectionName = dbdata.section_name;
         this._sectionPage = dbdata.section_page;
-        this._colorId = parseInt(dbdata.color_id, 10);
-        this._colorName = dbdata.color_name;
+        this._colorType = dbdata.color_type;
+        this._colorTypeName = dbdata.color_type_name;
         this._pageSizeId = parseInt(dbdata.page_size_id, 10);
         this._pageSizeName = dbdata.page_size_name;
         this._whole = dbdata.whole ? true : false;
@@ -55,8 +56,8 @@ export class PagePublishInfo {
     get sectionId() { return this._sectionId; }
     get sectionName() { return this._sectionName; }
     get sectionPage() { return this._sectionPage; }
-    get colorId() { return this._colorId; }
-    get colorName() { return this._colorName; }
+    get colorType() { return this._colorType; }
+    get colorTypeName() { return this._colorTypeName; }
     get pageSizeId() { return this._pageSizeId; }
     get pageSizeName() { return this._pageSizeName; }
     get whole() { return this._whole; }
@@ -70,8 +71,8 @@ export class PagePublishInfo {
             sectionId: this.sectionId,
             sectionName: this.sectionName,
             sectionPage: this.sectionPage,
-            colorId: this.colorId,
-            colorName: this.colorName,
+            colorType: this.colorType,
+            colorTypeName: this.colorTypeName,
             pageSizeId: this.pageSizeId,
             pageSizeName: this.pageSizeName,
             whole: this.whole
@@ -79,7 +80,7 @@ export class PagePublishInfo {
     }
     set sectionId(sectionId) { this._sectionId = sectionId; }
     set sectionPage(sectionPage) { this._sectionPage = sectionPage; }
-    set colorId(colorId) { this._colorId = colorId; }
+    set colorType(colorType) { this._colorType = colorType; }
     set pageSizeId(pageSizeId) { this._pageSizeId = pageSizeId; }
     set whole(whole) { this._whole = whole; }
 
@@ -88,10 +89,10 @@ export class PagePublishInfo {
         try {
             const res = await client.query(
                 'INSERT INTO t_page_publish_info (' +
-                ' media_id, pub_date, page, section_id, section_page, color_id, page_size_id, whole ' +
+                ' media_id, pub_date, page, section_id, section_page, color_type, page_size_id, whole ' +
                 ') VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id',
                 [
-                    data.mediaId, data.pubDate, data.page, data.sectionId, data.sectionPage, data.colorId,
+                    data.mediaId, data.pubDate, data.page, data.sectionId, data.sectionPage, data.colorType,
                     data.pageSizeId, data.whole
                 ]
             );
@@ -109,15 +110,15 @@ export class PagePublishInfo {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' I.id, I.media_id, I.pub_date, I.page, I.section_id, I.section_page, I.color_id, I.page_size_id, I.whole, ' +
-                ' M.name media_name, S.name section_name, C.name color_name, P.name page_size_name ' +
+                ' I.id, I.media_id, I.pub_date, I.page, I.section_id, I.section_page, I.color_type, I.page_size_id, I.whole, ' +
+                ' M.name media_name, S.name section_name, C.name color_type_name, P.name page_size_name ' +
                 'FROM t_page_publish_info I ' +
                 'LEFT JOIN t_config_media_def M ON M.id = I.media_id ' +
                 'LEFT JOIN t_config_section_def S ON S.id = I.section_id ' +
-                'LEFT JOIN t_config_color_def C ON C.id = I.color_id ' +
+                'LEFT JOIN t_config_code_def C ON C.class=$1 AND C.code = I.color_type ' +
                 'LEFT JOIN t_config_page_size_def P ON P.id = I.page_size_id ' +
-                'WHERE I.id = $1 ',
-                [id]
+                'WHERE I.id = $2 ',
+                [CodeClassDef.CLASS_COLORTYPE, id]
             );
             if (res.rowCount < 1) return null;
             return new PagePublishInfo(res.rows[0]);
@@ -133,15 +134,15 @@ export class PagePublishInfo {
         try {
             const res = await client.query(
                 'SELECT ' +
-                ' I.id, I.media_id, I.pub_date, I.page, I.section_id, I.section_page, I.color_id, I.page_size_id, I.whole, ' +
-                ' M.name media_name, S.name section_name, C.name color_name, P.name page_size_name ' +
+                ' I.id, I.media_id, I.pub_date, I.page, I.section_id, I.section_page, I.color_type, I.page_size_id, I.whole, ' +
+                ' M.name media_name, S.name section_name, C.name color_type_name, P.name page_size_name ' +
                 'FROM t_page_publish_info I ' +
                 'LEFT JOIN t_config_media_def M ON M.id = I.media_id ' +
                 'LEFT JOIN t_config_section_def S ON S.id = I.section_id ' +
-                'LEFT JOIN t_config_color_def C ON C.id = I.color_id ' +
+                'LEFT JOIN t_config_code_def C ON C.class=$1 AND C.code = I.color_type ' +
                 'LEFT JOIN t_config_page_size_def P ON P.id = I.page_size_id ' +
-                'WHERE I.media_id=$1 AND I.pub_date=$2 ORDER BY I.page ',
-                [mediaId, pubDate]
+                'WHERE I.media_id=$2 AND I.pub_date=$3 ORDER BY I.page ',
+                [CodeClassDef.CLASS_COLORTYPE, mediaId, pubDate]
             );
             let ret = [];
             for (const row of res.rows) {
@@ -160,9 +161,9 @@ export class PagePublishInfo {
         try {
             const res = await client.query(
                 'UPDATE t_page_publish_info SET ' +
-                ' section_id=$1, section_page=$2, color_id=$3, page_size_id=$4, whole=$5 ' +
+                ' section_id=$1, section_page=$2, color_type=$3, page_size_id=$4, whole=$5 ' +
                 'WHERE id=%6 ',
-                [this.sectionId, this.sectionPage, this.colorId, this.pageSizeId, this.whole, this.id]
+                [this.sectionId, this.sectionPage, this.colorType, this.pageSizeId, this.whole, this.id]
             );
             if (res.rowCount < 1) return null;
             return true;

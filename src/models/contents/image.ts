@@ -34,8 +34,8 @@ export interface IImageContent {
     fileStorageId: number,
     fileExtension: string,
     fileSize: number,
-    colorId: number,
-    colorName?: string,
+    colorType: string,
+    colorTypeName?: string,
     width: number,
     height: number,
     resolution: number
@@ -72,8 +72,8 @@ export class ImageContent extends IContent {
     private _fileStorageId: number;
     private _fileExtension: string;
     private _fileSize: number;
-    private _colorId: number;
-    private _colorName: string;
+    private _colorType: string;
+    private _colorTypeName: string;
     private _width: number;
     private _height: number;
     private _resolution: number;
@@ -111,8 +111,8 @@ export class ImageContent extends IContent {
         this._fileStorageId = parseInt(dbdata.file_storage_id, 10);
         this._fileExtension = dbdata.file_extension;
         this._fileSize = dbdata.file_size;
-        this._colorId = parseInt(dbdata.color_id, 10);
-        this._colorName = dbdata.color_name;
+        this._colorType = dbdata.color_type;
+        this._colorTypeName = dbdata.color_type_name;
         this._width = dbdata.width;
         this._height = dbdata.height;
         this._resolution = dbdata.resolution;
@@ -131,7 +131,7 @@ export class ImageContent extends IContent {
                 ' send_id, send_date, send_user, source, copyright, ' +
                 ' fixed_type, image_type, status, ' +
                 ' file_storage_id, file_extension, file_size, ' +
-                ' color_id, width, height, resolution, lock ' +
+                ' color_type, width, height, resolution, lock ' +
                 ') VALUES (' +
                 ' $1,$2,$3,$4,$5,$6,$7,' +
                 ' now(),$8,$9,$10,' +
@@ -145,7 +145,7 @@ export class ImageContent extends IContent {
                     data.sendId || null, data.sendDate || null, data.sendUser || null, data.source || null, data.copyright || null,
                     data.fixedType ? 1 : 0, data.imageType, data.status,
                     data.fileStorageId, data.fileExtension, data.fileSize,
-                    data.colorId, data.width, data.height, data.resolution, 0
+                    data.colorType, data.width, data.height, data.resolution, 0
                 ]
             );
             if (res.rowCount < 1) return null;
@@ -168,10 +168,10 @@ export class ImageContent extends IContent {
                 ' I.send_id, TO_CHAR(I.send_date, \'YYYYMMDDHH24MMISS\') send_date, I.send_user, I.source, I.copyright, ' +
                 ' I.fixed_type, I.image_type, I.status, ' +
                 ' I.file_storage_id, I.file_extension, I.file_size, ' +
-                ' I.color_id, I.width, I.height, I.resolution, ' +
+                ' I.color_type, I.width, I.height, I.resolution, ' +
                 ' M.name media_name, D.name dept_name, U.name user_name, E.name edition_name, ' +
                 ' C1.name source_name, C2.name copyright_name, C3.name image_type_name, C4.name status_name, ' +
-                ' C.name color_name ' +
+                ' C5.name color_type_name ' +
                 'FROM t_image I ' +
                 'LEFT JOIN t_config_media_def M ON M.id = I.media_id ' +
                 'LEFT JOIN t_account_dept D ON D.id = I.dept_id ' +
@@ -181,9 +181,12 @@ export class ImageContent extends IContent {
                 'LEFT JOIN t_config_code_def C2 ON C2.class=$2 AND C2.code = I.copyright ' +
                 'LEFT JOIN t_config_code_def C3 ON C3.class=$3 AND C3.code = I.image_type ' +
                 'LEFT JOIN t_config_code_def C4 ON C4.class=$4 AND C4.code = I.status ' +
-                'LEFT JOIN t_config_color_def C ON C.id = A.color_id ' +
-                'WHERE I.id = $5',
-                [CodeClassDef.CLASS_SOURCE, CodeClassDef.CLASS_COPYRIGHT, CodeClassDef.CLASS_IMAGETYPE, CodeClassDef.CLASS_IMAGESTATUS, id]
+                'LEFT JOIN t_config_code_def C5 ON C5.class=$5 AND C5.code = I.color_type ' +
+                'WHERE I.id = $6',
+                [
+                    CodeClassDef.CLASS_SOURCE, CodeClassDef.CLASS_COPYRIGHT, CodeClassDef.CLASS_IMAGETYPE, CodeClassDef.CLASS_IMAGESTATUS, CodeClassDef.CLASS_COLORTYPE,
+                    id
+                ]
             );
             if (res.rowCount < 1) return null;
             return new ImageContent(res.rows[0]);
@@ -204,10 +207,10 @@ export class ImageContent extends IContent {
                 ' I.send_id, TO_CHAR(I.send_date, \'YYYYMMDDHH24MMISS\') send_date, I.send_user, I.source, I.copyright, ' +
                 ' I.fixed_type, I.image_type, I.status, ' +
                 ' I.file_storage_id, I.file_extension, I.file_size, ' +
-                ' I.color_id, I.width, I.height, I.resolution, ' +
+                ' I.color_type, I.width, I.height, I.resolution, ' +
                 ' M.name media_name, D.name dept_name, U.name user_name, E.name edition_name, ' +
                 ' C1.name source_name, C2.name copyright_name, C3.name image_type_name, C4.name status_name, ' +
-                ' C.name color_name ' +
+                ' C5.name color_type_name ' +
                 'FROM t_image I ' +
                 'LEFT JOIN t_config_media_def M ON M.id = I.media_id ' +
                 'LEFT JOIN t_account_dept D ON D.id = I.dept_id ' +
@@ -217,9 +220,9 @@ export class ImageContent extends IContent {
                 'LEFT JOIN t_config_code_def C2 ON C2.class=$2 AND C2.code = I.copyright ' +
                 'LEFT JOIN t_config_code_def C3 ON C3.class=$3 AND C3.code = I.image_type ' +
                 'LEFT JOIN t_config_code_def C4 ON C4.class=$4 AND C4.code = I.status ' +
-                'LEFT JOIN t_config_color_def C ON C.id = A.color_id ' +
+                'LEFT JOIN t_config_code_def C5 ON C5.class=$5 AND C5.code = I.color_type ' +
                 'ORDER BY I.id ',
-                [CodeClassDef.CLASS_SOURCE, CodeClassDef.CLASS_COPYRIGHT, CodeClassDef.CLASS_IMAGETYPE, CodeClassDef.CLASS_IMAGESTATUS]
+                [CodeClassDef.CLASS_SOURCE, CodeClassDef.CLASS_COPYRIGHT, CodeClassDef.CLASS_IMAGETYPE, CodeClassDef.CLASS_IMAGESTATUS, CodeClassDef.CLASS_COLORTYPE]
             );
             let ret = [];
             for (const row of res.rows) {
@@ -377,8 +380,8 @@ export class ImageContent extends IContent {
     get fileStorageId() { return this._fileStorageId; }
     get fileExtension() { return this._fileExtension; }
     get fileSize() { return this._fileSize; }
-    get colorId() { return this._colorId; }
-    get colorName() { return this._colorName; }
+    get colorType() { return this._colorType; }
+    get colorTypeName() { return this._colorTypeName; }
     get width() { return this._width; }
     get height() { return this._height; }
     get resolution() { return this._resolution; }
@@ -414,8 +417,8 @@ export class ImageContent extends IContent {
             fileStorageId: this.fileStorageId,
             fileExtension: this.fileExtension,
             fileSize: this.fileSize,
-            colorId: this.colorId,
-            colorName: this.colorName,
+            colorType: this.colorType,
+            colorTypeName: this.colorTypeName,
             width: this.width,
             height: this.height,
             resolution: this.resolution

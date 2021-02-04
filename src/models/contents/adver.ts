@@ -36,8 +36,8 @@ export interface IAdverContent {
     fileStorageId: number,
     fileExtension: string,
     fileSize: number,
-    colorId: number,
-    colorName?: string,
+    colorType: string,
+    colorTypeName?: string,
     width: number,
     height: number,
     resolution: number
@@ -76,8 +76,8 @@ export class AdverContent extends IContent {
     private _fileStorageId: number;
     private _fileExtension: string;
     private _fileSize: number;
-    private _colorId: number;
-    private _colorName: string;
+    private _colorType: string;
+    private _colorTypeName: string;
     private _width: number;
     private _height: number;
     private _resolution: number;
@@ -117,8 +117,8 @@ export class AdverContent extends IContent {
         this._fileStorageId = parseInt(dbdata.file_storage_id, 10);
         this._fileExtension = dbdata.file_extension;
         this._fileSize = dbdata.file_size;
-        this._colorId = parseInt(dbdata.color_id, 10);
-        this._colorName = dbdata.color_name;
+        this._colorType = dbdata.color_type;
+        this._colorTypeName = dbdata.color_type_name;
         this._width = dbdata.width;
         this._height = dbdata.height;
         this._resolution = dbdata.resolution;
@@ -137,7 +137,7 @@ export class AdverContent extends IContent {
                 ' send_id, send_date, send_user, source, copyright, ' +
                 ' fixed_type, adver_type, status, ' +
                 ' file_storage_id, file_extension, file_size, ' +
-                ' color_id, width, height, resolution, lock ' +
+                ' color_type, width, height, resolution, lock ' +
                 ') VALUES (' +
                 ' $1,$2,$3,$4,$5,$6,$7,' +
                 ' now(),$8,$9,$10,$11,' +
@@ -151,7 +151,7 @@ export class AdverContent extends IContent {
                     data.sendId || null, data.sendDate || null, data.sendUser || null, data.source || null, data.copyright || null,
                     data.fixedType ? 1 : 0, data.adverType, data.status,
                     data.fileStorageId, data.fileExtension, data.fileSize,
-                    data.colorId, data.width, data.height, data.resolution, 0
+                    data.colorType, data.width, data.height, data.resolution, 0
                 ]
             );
             if (res.rowCount < 1) return null;
@@ -174,10 +174,10 @@ export class AdverContent extends IContent {
                 ' A.send_id, TO_CHAR(A.send_date, \'YYYYMMDDHH24MMISS\') send_date, A.send_user, A.source, A.copyright, ' +
                 ' A.fixed_type, A.adver_type, A.status, ' +
                 ' A.file_storage_id, A.file_extension, A.file_size, ' +
-                ' A.color_id, A.width, A.height, A.resolution, ' +
+                ' A.color_type, A.width, A.height, A.resolution, ' +
                 ' M.name media_name, D.name dept_name, U.name user_name, E.name edition_name, S.name adver_size_name, ' +
                 ' C1.name source_name, C2.name copyright_name, C3.name adver_type_name, C4.name status_name, ' +
-                ' C.name color_name ' +
+                ' C5.name color_type_name ' +
                 'FROM t_adver A ' +
                 'LEFT JOIN t_config_media_def M ON M.id = A.media_id ' +
                 'LEFT JOIN t_account_dept D ON D.id = A.dept_id ' +
@@ -188,9 +188,12 @@ export class AdverContent extends IContent {
                 'LEFT JOIN t_config_code_def C2 ON C2.class=$2 AND C2.code = A.copyright ' +
                 'LEFT JOIN t_config_code_def C3 ON C3.class=$3 AND C3.code = A.adver_type ' +
                 'LEFT JOIN t_config_code_def C4 ON C4.class=$4 AND C4.code = A.status ' +
-                'LEFT JOIN t_config_color_def C ON C.id = A.color_id ' +
-                'WHERE A.id = $5',
-                [CodeClassDef.CLASS_SOURCE, CodeClassDef.CLASS_COPYRIGHT, CodeClassDef.CLASS_ADVERTYPE, CodeClassDef.CLASS_ADVERSTATUS, id]
+                'LEFT JOIN t_config_code_def C5 ON C5.class=$5 AND C5.code = A.color_type ' +
+                'WHERE A.id = $6',
+                [
+                    CodeClassDef.CLASS_SOURCE, CodeClassDef.CLASS_COPYRIGHT, CodeClassDef.CLASS_ADVERTYPE, CodeClassDef.CLASS_ADVERSTATUS, CodeClassDef.CLASS_COLORTYPE,
+                    id
+                ]
             );
             if (res.rowCount < 1) return null;
             return new AdverContent(res.rows[0]);
@@ -211,10 +214,10 @@ export class AdverContent extends IContent {
                 ' A.send_id, TO_CHAR(A.send_date, \'YYYYMMDDHH24MMISS\') send_date, A.send_user, A.source, A.copyright, ' +
                 ' A.fixed_type, A.adver_type, A.status, ' +
                 ' A.file_storage_id, A.file_extension, A.file_size, ' +
-                ' A.color_id, A.width, A.height, A.resolution, ' +
+                ' A.color_type, A.width, A.height, A.resolution, ' +
                 ' M.name media_name, D.name dept_name, U.name user_name, E.name edition_name, S.name adver_size_name, ' +
                 ' C1.name source_name, C2.name copyright_name, C3.name adver_type_name, C4.name status_name, ' +
-                ' C.name color_name ' +
+                ' C5.name color_type_name ' +
                 'FROM t_adver A ' +
                 'LEFT JOIN t_config_media_def M ON M.id = A.media_id ' +
                 'LEFT JOIN t_account_dept D ON D.id = A.dept_id ' +
@@ -225,9 +228,9 @@ export class AdverContent extends IContent {
                 'LEFT JOIN t_config_code_def C2 ON C2.class=$2 AND C2.code = A.copyright ' +
                 'LEFT JOIN t_config_code_def C3 ON C3.class=$3 AND C3.code = A.adver_type ' +
                 'LEFT JOIN t_config_code_def C4 ON C4.class=$4 AND C4.code = A.status ' +
-                'LEFT JOIN t_config_color_def C ON C.id = A.color_id ' +
+                'LEFT JOIN t_config_code_def C5 ON C5.class=$5 AND C5.code = A.color_type ' +
                 'FROM t_adver A ORDER BY A.id ',
-                [CodeClassDef.CLASS_SOURCE, CodeClassDef.CLASS_COPYRIGHT, CodeClassDef.CLASS_ADVERTYPE, CodeClassDef.CLASS_ADVERSTATUS]
+                [CodeClassDef.CLASS_SOURCE, CodeClassDef.CLASS_COPYRIGHT, CodeClassDef.CLASS_ADVERTYPE, CodeClassDef.CLASS_ADVERSTATUS, CodeClassDef.CLASS_COLORTYPE]
             );
             let ret = [];
             for (const row of res.rows) {
@@ -387,8 +390,8 @@ export class AdverContent extends IContent {
     get fileStorageId() { return this._fileStorageId; }
     get fileExtension() { return this._fileExtension; }
     get fileSize() { return this._fileSize; }
-    get colorId() { return this._colorId; }
-    get colorName() { return this._colorName; }
+    get colorType() { return this._colorType; }
+    get colorTypeName() { return this._colorTypeName; }
     get width() { return this._width; }
     get height() { return this._height; }
     get resolution() { return this._resolution; }
@@ -426,8 +429,8 @@ export class AdverContent extends IContent {
             fileStorageId: this.fileStorageId,
             fileExtension: this.fileExtension,
             fileSize: this.fileSize,
-            colorId: this.colorId,
-            colorName: this.colorName,
+            colorType: this.colorType,
+            colorTypeName: this.colorTypeName,
             width: this.width,
             height: this.height,
             resolution: this.resolution

@@ -75,9 +75,14 @@ CREATE TABLE t_config_adver_local_def (
 
 -- DROP TABLE t_config_color_def;
 CREATE TABLE t_config_color_def (
-    id bigint NOT NULL,
+    id bigserial NOT NULL,
     name character varying(1024) NOT NULL,
-    CONSTRAINT pk_config_color_def_id PRIMARY KEY (id)
+    media_id bigint NOT NULL,
+    color_type character varying(8) NOT NULL,
+    code character varying(9) NOT NULL,
+    sort integer NOT NULL,
+    CONSTRAINT pk_config_color_def_id PRIMARY KEY (id),
+    CONSTRAINT unique_config_color_def UNIQUE (name, media_id)
 ) WITH (OIDS = FALSE);
 
 -- DROP TABLE t_config_print_type_def;
@@ -156,7 +161,7 @@ CREATE TABLE t_config_textstyle_def (
     sort integer NOT NULL,
     font_id bigint NOT NULL,
     font_size numeric NOT NULL,
-    color character varying (13) NOT NULL,
+    color_id bigint NOT NULL,
     xscale numeric NOT NULL,
     letter_spacing numeric NOT NULL,
     line_height numeric NOT NULL,

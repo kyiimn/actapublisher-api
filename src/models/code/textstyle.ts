@@ -1,4 +1,3 @@
-import { StringMappingType } from 'typescript';
 import conn from '../../services/conn';
 
 export interface ITextStyleDef {
@@ -10,7 +9,8 @@ export interface ITextStyleDef {
     fontId: number,
     fontName?: string,
     fontSize: number,
-    color: string,
+    colorId: number,
+    colorName?: string,
     xscale: number,
     letterSpacing: number,
     lineHeight: number,
@@ -29,7 +29,8 @@ export class TextStyleDef {
     private _fontId: number;
     private _fontName: string;
     private _fontSize: number;
-    private _color: string;
+    private _colorId: number;
+    private _colorName: string;
     private _xscale: number;
     private _letterSpacing: number;
     private _lineHeight: number;
@@ -47,7 +48,8 @@ export class TextStyleDef {
         this._fontId = parseInt(dbdata.font_id, 10);
         this._fontName = dbdata.font_name;
         this._fontSize = parseFloat(dbdata.font_size);
-        this._color = dbdata.color;
+        this._colorId = parseInt(dbdata.color_id, 10);
+        this._colorName = dbdata.color_name;
         this._xscale = parseFloat(dbdata.xscale);
         this._letterSpacing = parseFloat(dbdata.letter_spacing);
         this._lineHeight = parseFloat(dbdata.line_height);
@@ -63,12 +65,12 @@ export class TextStyleDef {
             const res = await client.query(
                 'INSERT t_config_textstyle_def (' +
                 ' media_id, name, sort, ' +
-                ' font_id, font_size, color, xscale, letter_spacing, line_height, ' +
+                ' font_id, font_size, color_id, xscale, letter_spacing, line_height, ' +
                 ' text_align, underline, strikeline, indent ' +
                 ') VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id',
                 [
                     data.mediaId, data.name, data.sort,
-                    data.fontId, data.fontSize, data.color, data.xscale, data.letterSpacing, data.lineHeight,
+                    data.fontId, data.fontSize, data.colorId, data.xscale, data.letterSpacing, data.lineHeight,
                     data.textAlign, data.underline ? 1 : 0, data.strikeline ? 1 : 0, data.indent
                 ]
             );
@@ -88,12 +90,13 @@ export class TextStyleDef {
             const res = await client.query(
                 'SELECT ' +
                 ' T.id, T.media_id, T.name, T.sort, ' +
-                ' T.font_id, T.font_size, T.color, T.xscale, T.letter_spacing, T.line_height, ' +
+                ' T.font_id, T.font_size, T.color_id, T.xscale, T.letter_spacing, T.line_height, ' +
                 ' T.text_align, T.underline, T.strikeline, T.indent, ' +
-                ' M.name media_name, F.name font_name ' +
+                ' M.name media_name, F.name font_name, C.name color_name ' +
                 'FROM t_config_textstyle_def T ' +
                 'LEFT JOIN t_config_media_def M ON M.id = T.media_id ' +
                 'LEFT JOIN t_config_font_def F ON F.id = T.font_id ' +
+                'LEFT JOIN t_config_color_def C ON C.id = T.color_id ' +
                 'WHERE T.id=$1',
                 [id]
             );
@@ -112,12 +115,13 @@ export class TextStyleDef {
             const res = await client.query(
                 'SELECT ' +
                 ' T.id, T.media_id, T.name, T.sort, ' +
-                ' T.font_id, T.font_size, T.color, T.xscale, T.letter_spacing, T.line_height, ' +
+                ' T.font_id, T.font_size, T.color_id, T.xscale, T.letter_spacing, T.line_height, ' +
                 ' T.text_align, T.underline, T.strikeline, T.indent, ' +
-                ' M.name media_name, F.name font_name ' +
+                ' M.name media_name, F.name font_name, C.name color_name ' +
                 'FROM t_config_textstyle_def T ' +
                 'LEFT JOIN t_config_media_def M ON M.id = T.media_id ' +
                 'LEFT JOIN t_config_font_def F ON F.id = T.font_id ' +
+                'LEFT JOIN t_config_color_def C ON C.id = T.color_id ' +
                 'WHERE T.media_id=$1  ' +
                 'ORDER BY T.media_id, T.sort, T.id ',
                 [mediaId]
@@ -140,12 +144,12 @@ export class TextStyleDef {
             const res = await client.query(
                 'UPDATE t_config_textstyle_def SET ' +
                 ' name=$1, sort=$2, ' +
-                ' font_id=$3, font_size=$4, color=$5, xscale=$6, letter_spacing=$7, line_height=$8, ' +
+                ' font_id=$3, font_size=$4, color_id=$5, xscale=$6, letter_spacing=$7, line_height=$8, ' +
                 ' text_align=$9, underline=$10, strikeline=$11, indent=$12 ' +
                 'WHERE id=$13',
                 [
                     this.name, this.sort,
-                    this.fontId, this.fontSize, this.color, this.xscale, this.letterSpacing, this.lineHeight,
+                    this.fontId, this.fontSize, this.colorId, this.xscale, this.letterSpacing, this.lineHeight,
                     this.textAlign, this.underline ? 1 : 0, this.strikeline ? 1 : 0, this.indent,
                     this.id
                 ]
@@ -178,7 +182,8 @@ export class TextStyleDef {
     get fontId() { return this._fontId; }
     get fontName() { return this._fontName; }
     get fontSize() { return this._fontSize; }
-    get color() { return this._color; }
+    get colorId() { return this._colorId; }
+    get colorName() { return this._colorName; }
     get xscale() { return this._xscale; }
     get letterSpacing() { return this._letterSpacing; }
     get lineHeight() { return this._lineHeight; }
@@ -196,7 +201,8 @@ export class TextStyleDef {
             fontId: this.fontId,
             fontName: this.fontName,
             fontSize: this.fontSize,
-            color: this.color,
+            colorId: this.colorId,
+            colorName: this.colorName,
             xscale: this.xscale,
             letterSpacing: this.letterSpacing,
             lineHeight: this.lineHeight,
@@ -211,7 +217,7 @@ export class TextStyleDef {
     set sort(sort) { this._sort = sort; }
     set fontId(fontId) { this._fontId = fontId; }
     set fontSize(fontSize) { this._fontSize = fontSize; }
-    set color(color) { this._color = color; }
+    set colorId(colorId) { this._colorId = colorId; }
     set xscale(xscale) { this._xscale = xscale; }
     set letterSpacing(letterSpacing) { this._letterSpacing = letterSpacing; }
     set lineHeight(lineHeight) { this._lineHeight = lineHeight; }
