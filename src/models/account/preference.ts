@@ -45,7 +45,7 @@ export class AccountPreference {
         this._textUnitTypeName = dbdata.text_unit_type_name;
         this._defaultBodyTextStyleId = parseInt(dbdata.default_body_textstyle_id, 10);
         this._defaultBodyTextStyleName = dbdata.default_body_textstyle_name;
-        this._defaultTitleTextStyleId = parseInt(dbdata.default_title_textstyle.id, 10);
+        this._defaultTitleTextStyleId = parseInt(dbdata.default_title_textstyle_id, 10);
         this._defaultTitleTextStyleName = dbdata.default_title_textstyle_name;
         this._dpi = dbdata.dpi;
         this._options = dbdata.options;
@@ -75,7 +75,7 @@ export class AccountPreference {
                 'SELECT ' +
                 ' P.id, P.media_id, P.frame_unit_type, P.text_unit_type, P.default_body_textstyle_id, P.default_title_textstyle_id, P.dpi, P.options, ' +
                 ' M.name media_name, C1.name frame_unit_type_name, C2.name text_unit_type_name, ' + 
-                ' T1.name default_title_textstyle_name, T2.name default_title_textstyle_name' +
+                ' T1.name default_body_textstyle_name, T2.name default_title_textstyle_name ' +
                 'FROM t_account_preference P ' +
                 'LEFT JOIN t_config_media_def M ON M.id=P.media_id ' +
                 'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code=P.frame_unit_type ' +
@@ -101,7 +101,7 @@ export class AccountPreference {
                 'SELECT ' +
                 ' P.id, P.media_id, P.frame_unit_type, P.text_unit_type, P.default_body_textstyle_id, P.default_title_textstyle_id, P.dpi, P.options, ' +
                 ' M.name media_name, C1.name frame_unit_type_name, C2.name text_unit_type_name, ' + 
-                ' T1.name default_title_textstyle_name, T2.name default_title_textstyle_name' +
+                ' T1.name default_body_textstyle_name, T2.name default_title_textstyle_name ' +
                 'FROM t_account_preference P ' +
                 'LEFT JOIN t_config_media_def M ON M.id=P.media_id ' +
                 'LEFT JOIN t_config_code_def C1 ON C1.class=$1 AND C1.code=P.frame_unit_type ' +
