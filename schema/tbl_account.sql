@@ -35,6 +35,8 @@ CREATE TABLE t_account_preference (
     media_id bigint NOT NULL,
     frame_unit_type character varying(8) NOT NULL,
     text_unit_type character varying(8) NOT NULL,
+    default_body_textstyle_id bigint NOT NUll,
+    default_title_textstyle_id bigint NOT NULL,
     dpi integer NOT NULL,
     options jsonb NOT NULL,
     CONSTRAINT pk_account_preference_id PRIMARY KEY (id),
