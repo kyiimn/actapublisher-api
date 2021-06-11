@@ -87,7 +87,7 @@ INSERT INTO t_config_storage_def (id, name, base_path, archive) VALUES (5, 'FONT
 
 INSERT INTO t_config_page_size_def
  (name, paper_type, paper_width, paper_height, paper_direction, linespacing_size, linespacing_unit, linespacing_ratio, col_margin_inside, col_margin_outside, col_count, col_size, col_spacing, col_other, col_total_size, line_margin_top, line_margin_bottom, line_height, line_count, line_spacing, line_other, line_total_size) 
- VALUES ('기본판형', 'CUSTOM', 400, 548, 'V', 9.5, 'POINT', 100, 20.01, 20.01, 6, 55.63, 5, 1.2, 400, 18,915, 18.915, 3.35, 106, 1.5, 0, 548);
+ VALUES ('기본판형', 'CUSTOM', 400, 548, 'V', 9.5, 'POINT', 100, 20.01, 20.01, 6, 55.63, 5, 1.2, 400, 18.915, 18.915, 3.35, 106, 1.5, 0, 548);
 INSERT INTO t_config_page_size_def
  (name, paper_type, paper_width, paper_height, paper_direction, linespacing_size, linespacing_unit, linespacing_ratio, col_margin_inside, col_margin_outside, col_count, col_size, col_spacing, col_other, col_total_size, line_margin_top, line_margin_bottom, line_height, line_count, line_spacing, line_other, line_total_size) 
  VALUES ('기본판형2', 'CUSTOM', 323, 470, 'V', 9.5, 'POINT', 100, 12, 12, 5, 56.6, 4, 0, 323, 13.224, 19.285, 3.81, 80, 1.7, 0, 470);
@@ -100,4 +100,4 @@ INSERT INTO t_config_font_def (media_id, name, file_storage_id, file_extension, 
 
 INSERT INTO t_config_textstyle_def (media_id, name, sort, font_id, font_size, color_id, xscale, letter_spacing, line_height, text_align, underline, strikeline, indent) VALUES (1, '본문', 1, 1, 3.88056, 1, 1, 0, 1, 0, 0, 0, 0);
 
-INSERT INTO t_account_preference (media_id, frame_unit_type, text_unit_type, dpi, options) VALUES (1, 'MM', 'POINT', 300, '{}');
+INSERT INTO t_account_preference (media_id, frame_unit_type, text_unit_type, default_body_textstyle_id, default_title_textstyle_id, dpi, options) VALUES (1, 'MM', 'POINT', 1, 1, 300, '{}');
